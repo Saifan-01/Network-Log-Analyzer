@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+ENV/
+.env
+
+# Database
+logs.db
+
+# Uploads directory - ignore contents but keep the folder
+uploads/*
+!uploads/.gitkeep

@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card card-custom p-5">
+            <div class="text-center mb-4">
+                <h2 class="fw-bold mb-3">Upload Network Log</h2>
+                <p class="text-muted">Upload server, router, or application logs to instantly detect and summarize issues using AI.</p>
+            </div>
+            
+            <form action="{{ url_for('upload_file') }}" method="POST" enctype="multipart/form-data">
+                <div class="upload-area mb-4" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-primary"></i>
+                    <h5 class="mb-1">Click to browse or drag and drop</h5>
+                    <p class="text-muted small mb-0">Supported formats: .log, .txt</p>
+                    <input type="file" id="fileInput" name="file" class="d-none" accept=".log,.txt" onchange="updateFileName(this)">
+                </div>
+                
+                <div id="fileNameDisplay" class="text-center text-info mb-4" style="display: none;">
+                    <i class="fas fa-file-alt me-2"></i><span id="fName"></span>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg fw-bold" style="background: linear-gradient(to right, var(--primary), var(--secondary)); border: none;">
+                        Analyze Log <i class="fas fa-magic ms-2"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <div class="row mt-5 text-center text-muted">
+            <div class="col-md-4">
+                <i class="fas fa-search fa-2x mb-2"></i>
+                <h6>Smart Parsing</h6>
+                <p class="small">Automatically detects Errors, Warnings, Fails, and Timeouts.</p>
+            </div>
+            <div class="col-md-4">
+                <i class="fas fa-brain fa-2x mb-2"></i>
+                <h6>AI Insights</h6>
+                <p class="small">Generates human-readable summaries of complex log files.</p>
+            </div>
+            <div class="col-md-4">
+                <i class="fas fa-tools fa-2x mb-2"></i>
+                <h6>Actionable Fixes</h6>
+                <p class="small">Provides suggested troubleshooting steps for support engineers.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateFileName(input) {
+        if(input.files && input.files[0]) {
+            document.getElementById('fileNameDisplay').style.display = 'block';
+            document.getElementById('fName').textContent = input.files[0].name;
+        }
+    }
+    
+    // Drag and drop visual feedback
+    const uploadArea = document.getElementById('uploadArea');
+    
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, unhighlight, false);
+    });
+
+    function highlight(e) {
+        uploadArea.style.borderColor = 'var(--primary)';
+        uploadArea.style.background = 'rgba(0, 210, 255, 0.05)';
+    }
+
+    function unhighlight(e) {
+        uploadArea.style.borderColor = 'rgba(255,255,255,0.2)';
+        uploadArea.style.background = 'rgba(255,255,255,0.02)';
+    }
+
+    uploadArea.addEventListener('drop', handleDrop, false);
+
+    function handleDrop(e) {
+        let dt = e.dataTransfer;
+        let files = dt.files;
+        document.getElementById('fileInput').files = files;
+        updateFileName(document.getElementById('fileInput'));
+    }
+</script>
+{% endblock %}

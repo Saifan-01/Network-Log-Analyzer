@@ -1,0 +1,588 @@
+:root {
+    --primary: #38bdf8;
+    --secondary: #6366f1;
+    --bg-dark: #0f172a;
+    --card-bg: rgba(30, 41, 59, 0.7);
+    --text-light: #f8fafc;
+    --text-muted: #cbd5e1;
+    /* Lightened so text is more visible on dark backgrounds */
+
+    /* Darker, more solid colors for the metrics */
+    --danger: #b91c1c;
+    --warning: #b45309;
+    --info: #1d4ed8;
+    --success: #047857;
+}
+
+/* Global Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    transition: all 0.25s ease;
+}
+
+/* Fix Bootstrap text-muted on dark background */
+.text-muted {
+    color: #94a3b8 !important;
+}
+
+/* Body Styling */
+body {
+    background: radial-gradient(circle at top left, #1e293b, #0f172a 60%);
+    color: var(--text-light);
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    padding-bottom: 40px;
+}
+
+/* Background Glow */
+body::before {
+    content: '';
+    position: fixed;
+    top: -200px;
+    right: -200px;
+    width: 500px;
+    height: 500px;
+    background: rgba(56, 189, 248, 0.08);
+    filter: blur(120px);
+    z-index: -1;
+}
+
+/* Navbar */
+.navbar-custom {
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 14px 24px;
+}
+
+/* Logo */
+.navbar-brand {
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+
+    background: linear-gradient(to right,
+            var(--primary),
+            var(--secondary));
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Cards */
+.card-custom {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+
+    padding: 20px;
+}
+
+/* Card Hover */
+.card-custom:hover {
+    transform: translateY(-6px) scale(1.01);
+
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45);
+
+    border-color: rgba(56, 189, 248, 0.4);
+}
+
+/* Upload Area */
+.upload-area {
+    border: 2px dashed rgba(255, 255, 255, 0.15);
+
+    border-radius: 18px;
+
+    padding: 50px;
+
+    text-align: center;
+
+    background: rgba(255, 255, 255, 0.03);
+
+    cursor: pointer;
+}
+
+/* Upload Hover */
+.upload-area:hover {
+    border-color: var(--primary);
+
+    background: rgba(56, 189, 248, 0.08);
+
+    box-shadow: 0 0 25px rgba(56, 189, 248, 0.15);
+}
+
+/* Statistic Cards */
+.stat-card {
+    text-align: center;
+
+    padding: 25px;
+
+    border-radius: 16px;
+
+    background: rgba(255, 255, 255, 0.03);
+}
+
+/* Stat Numbers */
+.stat-card h3 {
+    font-size: 2.7rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+/* Error Glow */
+.stat-card.error h3 {
+    color: var(--danger);
+    text-shadow: 0 0 12px rgba(239, 68, 68, 0.5);
+}
+
+/* Warning Glow */
+.stat-card.warning h3 {
+    color: var(--warning);
+    text-shadow: 0 0 12px rgba(245, 158, 11, 0.5);
+}
+
+/* Failed Glow */
+.stat-card.failed h3 {
+    color: var(--info);
+    text-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
+}
+
+/* Timeout Glow */
+.stat-card.timeout h3 {
+    color: var(--primary);
+    text-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
+}
+
+/* Tables */
+.table-custom {
+    color: var(--text-light);
+}
+
+/* Table Headers */
+.table-custom th {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+
+    color: var(--text-muted);
+
+    font-weight: 600;
+
+    padding: 14px;
+}
+
+/* Table Cells */
+.table-custom td {
+    border-bottom-color: rgba(255, 255, 255, 0.05);
+
+    padding: 14px;
+}
+
+/* Badges */
+.badge-error {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.5);
+}
+
+.badge-warning {
+    background-color: rgba(245, 158, 11, 0.2);
+    color: #fcd34d;
+    border: 1px solid rgba(245, 158, 11, 0.5);
+}
+
+.badge-failed {
+    background-color: rgba(59, 130, 246, 0.2);
+    color: #93c5fd;
+    border: 1px solid rgba(59, 130, 246, 0.5);
+}
+
+.badge-timeout {
+    background-color: rgba(56, 189, 248, 0.2);
+    color: #67e8f9;
+    border: 1px solid rgba(56, 189, 248, 0.5);
+}
+
+/* AI Summary Card */
+.ai-summary-card {
+    background: linear-gradient(145deg,
+            rgba(30, 41, 59, 1) 0%,
+            rgba(15, 23, 42, 1) 100%);
+
+    border-left: 4px solid var(--primary);
+
+    border-radius: 18px;
+}
+
+/* Buttons */
+.btn-custom {
+    background: linear-gradient(135deg,
+            var(--primary),
+            var(--secondary));
+
+    border: none;
+
+    border-radius: 12px;
+
+    color: white;
+
+    padding: 12px 20px;
+
+    font-weight: 600;
+}
+
+/* Button Hover */
+.btn-custom:hover {
+    transform: scale(1.03);
+
+    box-shadow: 0 8px 20px rgba(56, 189, 248, 0.3);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+}
+
+/* Background Blur */
+.bg-blur {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    z-index: -1;
+}
+
+.bg-blur-1 {
+    width: 300px;
+    height: 300px;
+    background: rgba(56, 189, 248, 0.12);
+    top: -100px;
+    left: -100px;
+}
+
+.bg-blur-2 {
+    width: 350px;
+    height: 350px;
+    background: rgba(99, 102, 241, 0.10);
+    bottom: -120px;
+    right: -120px;
+}
+
+/* Hero Section */
+.hero-section {
+    text-align: center;
+    padding: 30px 10px;
+}
+
+.hero-badge {
+    display: inline-block;
+    background: rgba(56, 189, 248, 0.12);
+    color: #7dd3fc;
+    border: 1px solid rgba(56, 189, 248, 0.25);
+
+    padding: 10px 18px;
+    border-radius: 999px;
+
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.gradient-text {
+    background: linear-gradient(to right, #38bdf8, #6366f1);
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-description {
+    max-width: 700px;
+    margin: auto;
+
+    color: #94a3b8;
+
+    font-size: 1.1rem;
+    line-height: 1.7;
+}
+
+/* Logo Icon */
+.logo-icon {
+    width: 50px;
+    height: 50px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: linear-gradient(135deg, #38bdf8, #6366f1);
+
+    border-radius: 14px;
+
+    color: white;
+    font-size: 1.2rem;
+
+    box-shadow: 0 8px 20px rgba(56, 189, 248, 0.25);
+}
+
+/* Brand */
+.brand-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.brand-subtitle {
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+/* Status Pill */
+.status-pill {
+    background: rgba(16, 185, 129, 0.12);
+
+    color: #6ee7b7;
+
+    border: 1px solid rgba(16, 185, 129, 0.25);
+
+    padding: 8px 14px;
+    border-radius: 999px;
+
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* Status Dot */
+.status-dot {
+    width: 8px;
+    height: 8px;
+
+    background: #10b981;
+
+    display: inline-block;
+
+    border-radius: 50%;
+
+    margin-right: 8px;
+
+    box-shadow: 0 0 10px #10b981;
+}
+
+/* Custom Alerts */
+.custom-alert {
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    color: white;
+
+    border-radius: 14px;
+}
+
+/* Footer */
+.footer-section {
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+
+    padding: 25px 0;
+
+    color: #94a3b8;
+}
+
+.footer-logo {
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+}
+
+.footer-text,
+.footer-version {
+    font-size: 0.85rem;
+    color: #94a3b8;
+}
+
+.footer-status {
+    color: #6ee7b7;
+    font-size: 0.9rem;
+}
+
+/* Background Blur */
+.bg-blur {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    z-index: -1;
+}
+
+.bg-blur-1 {
+    width: 300px;
+    height: 300px;
+    background: rgba(56, 189, 248, 0.12);
+    top: -100px;
+    left: -100px;
+}
+
+.bg-blur-2 {
+    width: 350px;
+    height: 350px;
+    background: rgba(99, 102, 241, 0.10);
+    bottom: -120px;
+    right: -120px;
+}
+
+/* Hero Section */
+.hero-section {
+    text-align: center;
+    padding: 30px 10px;
+}
+
+.hero-badge {
+    display: inline-block;
+    background: rgba(56, 189, 248, 0.12);
+    color: #7dd3fc;
+    border: 1px solid rgba(56, 189, 248, 0.25);
+
+    padding: 10px 18px;
+    border-radius: 999px;
+
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.gradient-text {
+    background: linear-gradient(to right, #38bdf8, #6366f1);
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-description {
+    max-width: 700px;
+    margin: auto;
+
+    color: #94a3b8;
+
+    font-size: 1.1rem;
+    line-height: 1.7;
+}
+
+/* Logo Icon */
+.logo-icon {
+    width: 50px;
+    height: 50px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: linear-gradient(135deg, #38bdf8, #6366f1);
+
+    border-radius: 14px;
+
+    color: white;
+    font-size: 1.2rem;
+
+    box-shadow: 0 8px 20px rgba(56, 189, 248, 0.25);
+}
+
+/* Brand */
+.brand-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.brand-subtitle {
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+/* Status Pill */
+.status-pill {
+    background: rgba(16, 185, 129, 0.12);
+
+    color: #6ee7b7;
+
+    border: 1px solid rgba(16, 185, 129, 0.25);
+
+    padding: 8px 14px;
+    border-radius: 999px;
+
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* Status Dot */
+.status-dot {
+    width: 8px;
+    height: 8px;
+
+    background: #10b981;
+
+    display: inline-block;
+
+    border-radius: 50%;
+
+    margin-right: 8px;
+
+    box-shadow: 0 0 10px #10b981;
+}
+
+/* Custom Alerts */
+.custom-alert {
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    color: white;
+
+    border-radius: 14px;
+}
+
+/* Footer */
+.footer-section {
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+
+    padding: 25px 0;
+
+    color: #94a3b8;
+}
+
+.footer-logo {
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+}
+
+.footer-text,
+.footer-version {
+    font-size: 0.85rem;
+    color: #94a3b8;
+}
+
+.footer-status {
+    color: #6ee7b7;
+    font-size: 0.9rem;
+}

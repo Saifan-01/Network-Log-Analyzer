@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NetAssist AI • Network Log Analyzer</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v={{ range(1, 100000) | random }}">
+
+</head>
+
+<body>
+
+    <!-- Background Blur Circles -->
+    <div class="bg-blur bg-blur-1"></div>
+    <div class="bg-blur bg-blur-2"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+        <div class="container">
+
+            <!-- Logo -->
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
+
+                <div class="logo-icon me-3">
+                    <i class="fas fa-network-wired"></i>
+                </div>
+
+                <div>
+                    <div class="brand-title">
+                        NetAssist AI
+                    </div>
+
+                    <div class="brand-subtitle">
+                        Smart Network Monitoring
+                    </div>
+                </div>
+
+            </a>
+
+            <!-- Right Side -->
+            <div class="d-flex align-items-center gap-3">
+
+                <div class="status-pill">
+                    <span class="status-dot"></span>
+                    System Active
+                </div>
+
+                <div class="text-end d-none d-md-block">
+                    <div class="small text-secondary">
+                        AI-Assisted
+                    </div>
+
+                    <div style="font-size: 0.85rem; color: #94a3b8;">
+                        Log Intelligence Dashboard
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container mt-5">
+
+        <!-- Hero Section -->
+        <div class="hero-section mb-5">
+
+            <div class="hero-badge">
+                <i class="fas fa-shield-alt me-2"></i>
+                Real-Time Threat & Error Detection
+            </div>
+
+            <h1 class="hero-title mt-4">
+                Analyze Network Logs
+                <span class="gradient-text">Intelligently</span>
+            </h1>
+
+            <p class="hero-description mt-3">
+                Upload network logs, detect anomalies, monitor failures,
+                and generate AI-powered summaries in seconds.
+            </p>
+
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+
+        <div class="alert alert-{{ category }} alert-dismissible fade show custom-alert" role="alert">
+
+            <i class="fas fa-circle-info me-2"></i>
+            {{ message }}
+
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close">
+            </button>
+
+        </div>
+
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <!-- Main Content -->
+        {% block content %}{% endblock %}
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer-section mt-5">
+
+        <div class="container">
+
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+
+                <div class="footer-left mb-3 mb-md-0">
+
+                    <div class="footer-logo">
+                        <i class="fas fa-microchip me-2"></i>
+                        NetAssist AI
+                    </div>
+
+                    <div class="footer-text">
+                        Built for network diagnostics & intelligent log monitoring.
+                    </div>
+
+                </div>
+
+                <div class="footer-right text-md-end">
+
+                    <div class="footer-status">
+                        <i class="fas fa-circle text-success me-2"></i>
+                        Monitoring Services Online
+                    </div>
+
+                    <div class="footer-version">
+                        Version 1.0 • Student Project
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    {% block scripts %}{% endblock %}
+
+</body>
+
+</html>

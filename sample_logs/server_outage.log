@@ -1,0 +1,10 @@
+[2026-05-17 14:00:01] INFO Starting Application Server v4.2.1
+[2026-05-17 14:00:05] INFO Connected to Database successfully.
+[2026-05-17 14:05:22] WARNING Memory usage exceeded 70% threshold.
+[2026-05-17 14:15:10] ERROR Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+[2026-05-17 14:16:00] FAILED Database query failed: Deadlock found when trying to get lock; try restarting transaction
+[2026-05-17 14:17:30] TIMEOUT HTTP request to payment gateway timed out after 30000ms
+[2026-05-17 14:18:05] ERROR NullPointerException at com.app.billing.InvoiceGenerator.generate(InvoiceGenerator.java:145)
+[2026-05-17 14:20:00] FAILED Failed to connect to Redis cache at 127.0.0.1:6379
+[2026-05-17 14:21:15] ERROR Cannot write to log file, disk full
+[2026-05-17 14:22:00] FATAL Server shutting down unexpectedly
