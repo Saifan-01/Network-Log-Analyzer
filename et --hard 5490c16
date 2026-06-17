@@ -1,0 +1,21 @@
+[33m5490c16[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Refactor frontend templates to improve accessibility, text contrast, and overall dashboard UX consistency
+[33m3071e71[m Enhance dashboard UI with improved color contrast, fix low-visibility text, and refine layout consistency across pages
+[33m0f52723[m Improved UI readability and dashboard visibility (Previously it wasnt clear)
+[33mc108751[m Url added (deployed website)
+[33mfa25b8e[m Updated after deploying on render
+[33m038880b[m Created README for Network Log Analyzer
+[33m325db66[m Initial commit
+[33m5490c16[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{0}: reset: moving to 5490c16
+[33m5490c16[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{1}: rebase (abort): returning to refs/heads/main
+[33m49c7089[m HEAD@{2}: pull origin main --rebase (start): checkout 49c708911ca1c35eb3c6a1e7fa95ad4c40cf07f9
+[33m5490c16[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{3}: rebase (finish): returning to refs/heads/main
+[33m5490c16[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{4}: commit: Refactor frontend templates to improve accessibility, text contrast, and overall dashboard UX consistency
+[33m3071e71[m HEAD@{5}: commit: Enhance dashboard UI with improved color contrast, fix low-visibility text, and refine layout consistency across pages
+[33m0f52723[m HEAD@{6}: commit: Improved UI readability and dashboard visibility (Previously it wasnt clear)
+[33mc108751[m HEAD@{7}: pull origin main --rebase (start): checkout c108751656a4f82400ff8fd5c07395d8d29b456a
+[33m49c7089[m HEAD@{8}: rebase (finish): returning to refs/heads/main
+[33m49c7089[m HEAD@{9}: commit: Improved dashboard UI and log analysis updates
+[33mfa25b8e[m HEAD@{10}: pull origin main --rebase (start): checkout fa25b8e7fac601ac7e463416c58830fd5bfb359f
+[33me575c8a[m HEAD@{11}: commit: Updated README making it more readable and adding more diagrams
+[33m325db66[m HEAD@{12}: Branch: renamed refs/heads/master to refs/heads/main
+[33m325db66[m HEAD@{14}: commit (initial): Initial commit
