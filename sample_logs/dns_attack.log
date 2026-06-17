@@ -1,0 +1,15 @@
+2026-05-17 03:00:01 INFO DNS resolver service started on 0.0.0.0:53
+2026-05-17 03:01:05 WARNING Elevated DNS query rate from 10.10.10.50 — 450 req/sec
+2026-05-17 03:01:10 WARNING Elevated DNS query rate from 10.10.10.50 — 900 req/sec
+2026-05-17 03:01:15 ERROR DNS amplification attack suspected from 10.10.10.50
+2026-05-17 03:01:20 TIMEOUT DNS response timeout for query ns1.target-corp.com
+2026-05-17 03:01:21 TIMEOUT DNS response timeout for query ns2.target-corp.com
+2026-05-17 03:01:22 TIMEOUT DNS response timeout for query mail.target-corp.com
+2026-05-17 03:01:25 ERROR DNS zone transfer FAILED — unauthorized request from 10.10.10.50
+2026-05-17 03:02:00 WARNING Cache poisoning attempt detected for domain bank.example.com
+2026-05-17 03:02:05 ERROR DNSSEC validation failed for bank.example.com
+2026-05-17 03:02:10 FAILED DNS query resolution failed — upstream resolver unreachable
+2026-05-17 03:02:15 TIMEOUT DNS forwarding timeout to 8.8.8.8
+2026-05-17 03:02:16 TIMEOUT DNS forwarding timeout to 1.1.1.1
+2026-05-17 03:03:00 ERROR DNS service entering degraded mode — dropping non-critical queries
+2026-05-17 03:03:30 FAILED DNS service restart FAILED — config file corrupted

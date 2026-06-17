@@ -180,9 +180,3 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 👨‍💻 **Saifan Nayyar**  
 📧 **saifan0218@gmail.com**
-
----
-
-### ⭐ Show some love!
-
-If you like this project, **give it a star ⭐ on GitHub**!

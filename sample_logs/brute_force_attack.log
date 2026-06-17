@@ -1,0 +1,16 @@
+2026-05-17 09:00:01 INFO SSH service started on 0.0.0.0:22
+2026-05-17 09:00:45 FAILED Authentication failed for user 'admin' from 192.168.1.55
+2026-05-17 09:00:46 FAILED Authentication failed for user 'admin' from 192.168.1.55
+2026-05-17 09:00:47 FAILED Authentication failed for user 'root' from 192.168.1.55
+2026-05-17 09:00:48 FAILED Authentication failed for user 'root' from 192.168.1.55
+2026-05-17 09:00:49 FAILED Authentication failed for user 'ubuntu' from 192.168.1.55
+2026-05-17 09:00:50 WARNING Too many failed login attempts from 192.168.1.55 — rate limiting applied
+2026-05-17 09:00:51 FAILED Authentication failed for user 'admin' from 10.0.0.99
+2026-05-17 09:00:52 FAILED Authentication failed for user 'admin' from 10.0.0.99
+2026-05-17 09:00:53 ERROR SSH connection terminated abnormally from 10.0.0.99
+2026-05-17 09:01:00 FAILED Authentication failed for user 'pi' from 192.168.1.55
+2026-05-17 09:01:01 FAILED Authentication failed for user 'test' from 192.168.1.55
+2026-05-17 09:01:02 WARNING Blocking IP 192.168.1.55 due to repeated failures
+2026-05-17 09:01:10 ERROR Firewall rule update FAILED — could not block attacker IP
+2026-05-17 09:02:00 FAILED Authentication failed for user 'admin' from 172.16.0.5
+2026-05-17 09:02:05 ERROR Unauthorized access attempt logged from 172.16.0.5
