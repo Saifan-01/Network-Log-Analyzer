@@ -30,12 +30,6 @@ The system features a **Simulated AI Insight Engine** that analyzes the parsed d
 
 ---
 
-## 📸 Screenshots
-
-### AI Log Analytics Dashboard
-
-*(Replace this placeholder with a screenshot of your dashboard once uploaded to GitHub)*
-`![Dashboard](your_screenshot_link_here)`
 
 ---
 
