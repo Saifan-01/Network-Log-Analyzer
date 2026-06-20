@@ -81,60 +81,88 @@ def answer_question(question, counts, issues, anomalies):
     q = question.lower().strip()
     total = sum(counts.values())
 
-    if any(w in q for w in ['error', 'errors']):
+    if any(w in q for w in ['error', 'errors', 'cause', 'what caused']):
         c = counts.get('ERROR', 0)
-        note = "This is a high number — investigate immediately." if c >= 5 else ("Minor error count detected." if c > 0 else "No errors found.")
-        return f"There are **{c} ERROR events** in this log. {note}"
+        if c == 0:
+            return "✅ **Good news!** I didn't find any ERROR events in this log. If you're experiencing issues, they might be related to timeouts or failed authentications instead."
+        
+        examples = [i['content'] for i in issues if i['type'] == 'ERROR'][:2]
+        ex_str = "\n".join([f"> `{e}`" for e in examples])
+        
+        note = "This is a **high number of errors** and indicates a severe problem, such as application crashes or unhandled exceptions." if c >= 5 else "This is a moderate amount, but still requires investigation."
+        response = f"There are **{c} ERROR events** in this log. {note}\n\n"
+        if examples:
+            response += f"Here are examples of what I found:\n{ex_str}\n\n**Action:** Check the application stack traces and verify system resources (memory/disk)."
+        return response
 
     elif any(w in q for w in ['warning', 'warn']):
         c = counts.get('WARNING', 0)
-        return f"Found **{c} WARNING events**. Warnings indicate risks that haven't caused outages yet but should be monitored."
+        if c == 0:
+            return "✅ **No warnings detected.** Your system config and resource levels appear stable."
+        return f"Found **{c} WARNING events**. While warnings aren't fatal errors, a high number suggests potential instability, resource degradation, or deprecated configurations that should be addressed before they cause an outage."
 
     elif any(w in q for w in ['timeout', 'timed out']):
         c = counts.get('TIMEOUT', 0)
-        note = "This strongly suggests network instability or a DNS issue." if c >= 3 else "Isolated timeouts — possibly transient."
-        return f"Detected **{c} TIMEOUT events**. {note}"
+        if c == 0:
+            return "✅ **No timeouts found.** Network connectivity and upstream services appear to be responding in time."
+        
+        note = "This strongly suggests **severe network instability**, a DNS resolution failure, or a completely unresponsive upstream service." if c >= 3 else "These seem to be isolated timeouts — possibly transient network blips."
+        return f"🚨 Detected **{c} TIMEOUT events**. {note}\n\n**Action:** Check DNS health, verify routing rules, and ensure upstream APIs are online."
 
-    elif any(w in q for w in ['fail', 'failed', 'failure']):
+    elif any(w in q for w in ['fail', 'failed', 'failure', 'login']):
         c = counts.get('FAILED', 0)
-        return f"There are **{c} FAILED events**. These often indicate broken authentication, refused connections, or failed DB queries."
+        if c == 0:
+            return "✅ **No failures detected.**"
+        
+        brute_force = any('Brute Force' in a['type'] for a in anomalies)
+        extra = "\n\n⚠️ **WARNING: This looks like a brute-force attack!** Check the anomaly report immediately." if brute_force else ""
+        
+        return f"There are **{c} FAILED events**. These often indicate broken authentication attempts, refused database connections, or unauthorized access attempts.{extra}"
 
     elif any(w in q for w in ['critical', 'worst', 'severe', 'most']):
-        primary = max(counts, key=counts.get) if total > 0 else None
-        if primary:
-            return f"The most critical issue is **{primary}** with **{counts[primary]} occurrences**. Prioritize this in your investigation."
-        return "No critical issues found in this log."
+        if total == 0:
+            return "✅ **No critical issues found.** The log is clean."
+            
+        primary = max(counts, key=counts.get)
+        return f"The most critical issue category is **{primary}** with **{counts[primary]} occurrences**. You should prioritize investigating these events first to stabilize the system."
 
     elif any(w in q for w in ['ip', 'address', 'suspicious', 'attack', 'brute']):
         ip_anomalies = [a for a in anomalies if 'IP' in a['type'] or 'Brute' in a['type']]
         if ip_anomalies:
-            return "⚠️ **Suspicious Activity Detected:**\n" + "\n".join([f"• [{a['severity']}] {a['message']}" for a in ip_anomalies])
-        return "✅ No suspicious IP patterns or brute-force activity detected."
+            return "⚠️ **Suspicious Activity Detected:**\n\n" + "\n\n".join([f"• **[{a['severity']}] {a['type']}**\n  {a['message']}" for a in ip_anomalies])
+        return "✅ **No suspicious IP patterns or brute-force activity detected.**"
 
-    elif any(w in q for w in ['anomal', 'unusual', 'weird']):
+    elif any(w in q for w in ['anomal', 'unusual', 'weird', 'spike']):
         if anomalies:
-            return "🚨 **Anomalies Found:**\n" + "\n".join([f"• [{a['severity']}] {a['message']}" for a in anomalies])
-        return "✅ No anomalies detected in this log."
+            return "🚨 **System Anomalies Found:**\n\n" + "\n\n".join([f"• **[{a['severity']}] {a['type']}**\n  {a['message']}" for a in anomalies])
+        return "✅ **No anomalies detected.** Event rates are within normal expectations."
 
     elif any(w in q for w in ['summary', 'summarize', 'overview', 'what happened', 'tell me']):
-        parts = [f"{v} {k}" for k, v in counts.items() if v > 0]
-        status = "significant instability detected." if total >= 10 else ("moderate issues found." if total >= 5 else "system looks mostly healthy.")
-        return f"**Log Summary:** {total} total critical events — {', '.join(parts) if parts else 'none'}. {status.capitalize()}"
+        if total == 0:
+            return "✅ **Log Summary:** I analyzed the log and found zero critical events. The system looks completely healthy."
+            
+        parts = [f"**{v} {k}**" for k, v in counts.items() if v > 0]
+        status = "🚨 **Significant instability detected.** Immediate action required." if total >= 10 else ("⚠️ **Moderate issues found.** Investigation recommended." if total >= 5 else "ℹ️ **Minor events detected.** System looks mostly healthy.")
+        
+        anomaly_note = f"\n\nI also detected **{len(anomalies)} anomalies** (e.g., suspicious IPs or error bursts)." if anomalies else ""
+        
+        return f"{status}\n\n**Total critical events: {total}**\nBreakdown: {', '.join(parts)}.{anomaly_note}"
 
     elif any(w in q for w in ['fix', 'solve', 'how to', 'recommend', 'suggestion', 'help']):
-        primary = max(counts, key=counts.get) if total > 0 else None
+        if total == 0:
+            return "✅ **No fixes needed** — the log is clean!"
+            
+        primary = max(counts, key=counts.get)
         fixes = {
-            'ERROR': "1. Check error stack traces. 2. Verify memory & disk. 3. Restart affected service.",
-            'WARNING': "1. Review config for warnings. 2. Monitor resource usage. 3. Set alerts.",
-            'FAILED': "1. Check credentials & endpoints. 2. Review firewall rules. 3. Test connectivity.",
-            'TIMEOUT': "1. Check DNS resolution. 2. Verify routing. 3. Increase timeout in config."
+            'ERROR': "1. Review the specific error stack traces to identify the failing component.\n2. Verify system resources (Memory, Disk Space, CPU).\n3. Restart the affected service if a memory leak or locked state is suspected.",
+            'WARNING': "1. Review application configuration for deprecated settings.\n2. Monitor resource usage closely for upward trends.\n3. Implement alerting thresholds before warnings become errors.",
+            'FAILED': "1. Verify user credentials and API endpoint configurations.\n2. Review firewall (iptables/UFW) and ACL rules.\n3. Test outbound connectivity to destination services.",
+            'TIMEOUT': "1. Investigate DNS resolution latency and reachability.\n2. Check for network routing loops or dropped packets.\n3. Consider increasing timeout thresholds in the client configuration if the service is known to be slow."
         }
-        if primary:
-            return f"**Recommended Fix for {primary}:** {fixes.get(primary)}"
-        return "No fixes needed — log is clean!"
+        return f"Based on the primary issue (**{primary}**), here is the **Recommended Action Plan**:\n\n{fixes.get(primary)}"
 
     elif any(w in q for w in ['total', 'count', 'how many', 'number']):
-        return f"**Total critical events: {total}** — Errors: {counts.get('ERROR',0)}, Warnings: {counts.get('WARNING',0)}, Failed: {counts.get('FAILED',0)}, Timeouts: {counts.get('TIMEOUT',0)}."
+        return f"I found **{total} total critical events**.\n\nHere is the breakdown:\n• **Errors:** {counts.get('ERROR',0)}\n• **Warnings:** {counts.get('WARNING',0)}\n• **Failed:** {counts.get('FAILED',0)}\n• **Timeouts:** {counts.get('TIMEOUT',0)}"
 
     else:
-        return f"I analyzed this log and found **{total} total events**. Try asking: *'Summarize the log'*, *'How many errors?'*, *'Any suspicious activity?'*, or *'What should I fix?'*"
+        return f"I analyzed this log and found **{total} total events**. I'm an AI specialized in analyzing log patterns. Try asking me specific questions like:\n\n• *'Summarize the log'*\n• *'What caused the errors?'*\n• *'Any suspicious IP activity?'*\n• *'What should I fix?'*"

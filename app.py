@@ -32,24 +32,69 @@ def allowed_file(filename):
 
 @app.route('/')
 def index():
+    return render_template('landing.html')
+
+@app.route('/app')
+def app_main():
     return render_template('index.html')
+
+@app.route('/dashboard')
+def dashboard_view():
+    analysis_id = session.get('analysis_id')
+    if not analysis_id or analysis_id not in analysis_store:
+        flash('Please upload a log file or run a simulation first.', 'info')
+        return redirect(url_for('app_main'))
+        
+    store = analysis_store[analysis_id]
+    
+    # We pass the existing data to dashboard.html
+    return render_template(
+        'dashboard.html',
+        metadata={'filename': store['filename']},
+        counts=store['counts'],
+        issues=store['issues'][:100],
+        anomalies=store['anomalies'],
+        top_ips=store['top_ips'],
+        analysis_id=analysis_id,
+        insights=store['insights'],
+        severity="Calculated",
+        total_events=sum(store['counts'].values()),
+        security_score=85,
+        root_cause="Analyzed",
+        executive_summary="Dashboard view activated.",
+        critical_findings=store['issues'][:5]
+    )
+
+@app.route('/explorer')
+def explorer():
+    analysis_id = session.get('analysis_id')
+    if not analysis_id or analysis_id not in analysis_store:
+        flash('Please upload a log file or run a simulation first to explore logs.', 'info')
+        return redirect(url_for('app_main'))
+        
+    store = analysis_store[analysis_id]
+    return render_template('explorer.html', issues=store['issues'], filename=store['filename'])
+
+@app.route('/docs')
+def docs():
+    return render_template('docs.html')
 
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
         flash('No file uploaded', 'danger')
-        return redirect(url_for('index'))
+        return redirect(url_for('app_main'))
 
     file = request.files['file']
 
     if file.filename == '':
         flash('No file selected', 'danger')
-        return redirect(url_for('index'))
+        return redirect(url_for('app_main'))
 
     if not allowed_file(file.filename):
         flash('Invalid file type', 'danger')
-        return redirect(url_for('index'))
+        return redirect(url_for('app_main'))
 
     filename = secure_filename(file.filename)
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -146,7 +191,7 @@ def ask():
 def incident_report(analysis_id):
     if analysis_id not in analysis_store:
         flash('Session expired', 'warning')
-        return redirect(url_for('index'))
+        return redirect(url_for('app_main'))
 
     store = analysis_store[analysis_id]
 
@@ -216,13 +261,13 @@ def simulate(scenario):
 
     if not file:
         flash('Invalid scenario', 'danger')
-        return redirect(url_for('index'))
+        return redirect(url_for('app_main'))
 
     path = os.path.join('sample_logs', file)
 
     if not os.path.exists(path):
         flash('Sample log missing', 'danger')
-        return redirect(url_for('index'))
+        return redirect(url_for('app_main'))
 
     counts, issues, anomalies, top_ips = parse_log(path)
 

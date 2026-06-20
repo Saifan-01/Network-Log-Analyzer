@@ -2,146 +2,158 @@
 
 {% block content %}
 
-<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+<div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h2 class="fw-bold mb-0">Analysis Dashboard</h2>
-        <p class="text-muted small mb-0 mt-1">
-            <i class="fas fa-file-alt me-1"></i>{{ metadata.filename }}
-            &nbsp;|&nbsp; {{ metadata.upload_time }}
+        <h3 class="fw-bold text-white mb-1">Observability Dashboard</h3>
+        <p class="text-muted small mb-0">
+            Source: <span class="badge bg-secondary me-2">{{ metadata.filename }}</span>
+            {% if root_cause == 'Simulation mode' %}
+                <span class="badge bg-info text-dark pulse-dot"><i class="fas fa-satellite-dish me-1"></i> SIMULATION ACTIVE</span>
+            {% else %}
+                <span class="badge bg-success pulse-dot"><i class="fas fa-circle me-1" style="font-size: 8px;"></i> LIVE</span>
+            {% endif %}
         </p>
     </div>
 
-    <div class="d-flex gap-2 flex-wrap">
-        <a href="/export/csv/{{ analysis_id }}" class="btn btn-sm btn-outline-success">
-            <i class="fas fa-file-csv me-1"></i> CSV
-        </a>
-        <a href="/export/json/{{ analysis_id }}" class="btn btn-sm btn-outline-info">
-            <i class="fas fa-file-code me-1"></i> JSON
-        </a>
-        <a href="/incident-report/{{ analysis_id }}" class="btn btn-sm btn-danger">
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('incident_report', analysis_id=analysis_id) }}" class="btn btn-sm btn-outline-danger">
             <i class="fas fa-shield-alt me-1"></i> Incident Report
         </a>
-        <a href="{{ url_for('index') }}" class="btn btn-sm btn-outline-light">
-            <i class="fas fa-arrow-left me-1"></i> New File
-        </a>
-    </div>
-</div>
-
-{% set sev = insights.severity %}
-
-{% if sev == 'CRITICAL' %}
-<div class="alert alert-danger mb-4">
-    <b>CRITICAL SEVERITY</b> — Immediate action required.
-</div>
-{% elif sev == 'HIGH' %}
-<div class="alert alert-warning mb-4">
-    <b>HIGH SEVERITY</b> — Significant issues detected.
-</div>
-{% elif sev == 'MEDIUM' %}
-<div class="alert alert-primary mb-4">
-    <b>MEDIUM SEVERITY</b> — Moderate issues found.
-</div>
-{% endif %}
-
-<div class="row g-3 mb-4">
-    <div class="col-6 col-md-3">
-        <div class="card card-custom p-3 text-center">
-            <h3>{{ counts['ERROR'] }}</h3>
-            <small>Errors</small>
-        </div>
-    </div>
-
-    <div class="col-6 col-md-3">
-        <div class="card card-custom p-3 text-center">
-            <h3>{{ counts['WARNING'] }}</h3>
-            <small>Warnings</small>
-        </div>
-    </div>
-
-    <div class="col-6 col-md-3">
-        <div class="card card-custom p-3 text-center">
-            <h3>{{ counts['FAILED'] }}</h3>
-            <small>Failed</small>
-        </div>
-    </div>
-
-    <div class="col-6 col-md-3">
-        <div class="card card-custom p-3 text-center">
-            <h3>{{ counts['TIMEOUT'] }}</h3>
-            <small>Timeouts</small>
-        </div>
-    </div>
-</div>
-
-<div class="row g-3 mb-4">
-
-    <div class="col-md-4">
-        <div class="card card-custom p-3">
-            <h6>Event Distribution</h6>
-            <canvas id="distributionChart"></canvas>
-        </div>
-    </div>
-
-    <div class="col-md-8">
-        <div class="card card-custom p-3">
-            <h5>AI Insights</h5>
-            <p>{{ insights.summary }}</p>
-
-            <h6>Fixes</h6>
-            <ul>
-                {% for fix in insights.fixes %}
-                <li>{{ fix }}</li>
-                {% endfor %}
+        <div class="dropdown">
+            <button class="btn btn-sm btn-custom dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <i class="fas fa-download me-1"></i> Export Data
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark shadow">
+                <li><a class="dropdown-item" href="/export/csv/{{ analysis_id }}"><i class="fas fa-file-csv me-2 text-success"></i> CSV Format</a></li>
+                <li><a class="dropdown-item" href="/export/json/{{ analysis_id }}"><i class="fas fa-file-code me-2 text-info"></i> JSON Format</a></li>
             </ul>
         </div>
     </div>
-
 </div>
 
-{% if anomalies %}
-<div class="card card-custom p-3 mb-4">
-    <h5>Anomalies</h5>
-    {% for a in anomalies %}
-    <div class="mb-2">
-        <b>{{ a.type }}</b> ({{ a.severity }}) - {{ a.message }}
+<!-- Key Metrics Row -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="card bg-dark border-0 rounded-4 p-4 shadow-sm h-100" style="background: rgba(30, 41, 59, 0.5) !important; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05) !important; border-left: 3px solid #ef4444 !important;">
+            <div class="text-muted small fw-bold text-uppercase mb-2">Errors</div>
+            <h2 class="text-white fw-bold mb-0">{{ counts.get('ERROR', 0) }}</h2>
+        </div>
     </div>
-    {% endfor %}
-</div>
-{% endif %}
-
-<div class="card card-custom p-3 mb-4">
-    <h5>Ask Your Logs</h5>
-
-    <div id="chatBox" class="mb-3"></div>
-
-    <div class="input-group">
-        <input type="text" id="chatInput" class="form-control" placeholder="Ask something...">
-        <button class="btn btn-primary" onclick="sendQuestion()">Ask</button>
+    <div class="col-6 col-md-3">
+        <div class="card bg-dark border-0 rounded-4 p-4 shadow-sm h-100" style="background: rgba(30, 41, 59, 0.5) !important; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05) !important; border-left: 3px solid #f59e0b !important;">
+            <div class="text-muted small fw-bold text-uppercase mb-2">Warnings</div>
+            <h2 class="text-white fw-bold mb-0">{{ counts.get('WARNING', 0) }}</h2>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card bg-dark border-0 rounded-4 p-4 shadow-sm h-100" style="background: rgba(30, 41, 59, 0.5) !important; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05) !important; border-left: 3px solid #3b82f6 !important;">
+            <div class="text-muted small fw-bold text-uppercase mb-2">Failed Auth</div>
+            <h2 class="text-white fw-bold mb-0">{{ counts.get('FAILED', 0) }}</h2>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card bg-dark border-0 rounded-4 p-4 shadow-sm h-100" style="background: rgba(30, 41, 59, 0.5) !important; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05) !important; border-left: 3px solid #8b5cf6 !important;">
+            <div class="text-muted small fw-bold text-uppercase mb-2">Timeouts</div>
+            <h2 class="text-white fw-bold mb-0">{{ counts.get('TIMEOUT', 0) }}</h2>
+        </div>
     </div>
 </div>
 
-<div class="card card-custom p-3">
-    <h5>Critical Events</h5>
-    <table class="table table-dark table-hover">
-        <thead>
-        <tr>
-            <th>Line</th>
-            <th>Type</th>
-            <th>Content</th>
-        </tr>
-        </thead>
+<!-- Charts Row -->
+<div class="row g-3 mb-4">
+    <!-- Traffic Over Time -->
+    <div class="col-md-8">
+        <div class="card bg-dark border-0 rounded-4 p-4 shadow-sm h-100" style="background: rgba(30, 41, 59, 0.5) !important; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05) !important;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h6 class="fw-bold mb-0 text-white">Traffic & Error Rate (Last 60m)</h6>
+                <span class="badge bg-secondary text-muted bg-opacity-10 border border-secondary">Simulated Time-Series</span>
+            </div>
+            <div style="height: 250px;">
+                <canvas id="trafficChart"></canvas>
+            </div>
+        </div>
+    </div>
 
-        <tbody>
-        {% for issue in issues %}
-        <tr>
-            <td>{{ issue.line_num }}</td>
-            <td>{{ issue.type }}</td>
-            <td>{{ issue.content }}</td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <!-- Event Distribution -->
+    <div class="col-md-4">
+        <div class="card bg-dark border-0 rounded-4 p-4 shadow-sm h-100" style="background: rgba(30, 41, 59, 0.5) !important; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05) !important;">
+            <h6 class="fw-bold mb-4 text-white">Event Breakdown</h6>
+            <div style="height: 250px; display: flex; justify-content: center;">
+                <canvas id="distributionChart"></canvas>
+            </div>
+        </div>
+    </div>
 </div>
+
+<div class="row g-3 mb-4">
+    <!-- Top IPs -->
+    <div class="col-md-4">
+        <div class="card bg-dark border-0 rounded-4 p-4 shadow-sm h-100" style="background: rgba(30, 41, 59, 0.5) !important; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05) !important;">
+            <h6 class="fw-bold mb-4 text-white"><i class="fas fa-network-wired me-2 text-primary"></i>Top Talkers (IPs)</h6>
+            
+            {% if top_ips %}
+                {% for ip, count in top_ips.items() %}
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="font-monospace small text-muted">{{ ip }}</span>
+                    <div class="d-flex align-items-center w-50">
+                        <div class="progress flex-grow-1 me-2" style="height: 6px; background: rgba(255,255,255,0.1);">
+                            <div class="progress-bar bg-primary rounded" style="width: {{ (count / top_ips.values()|max) * 100 }}%"></div>
+                        </div>
+                        <span class="small fw-bold">{{ count }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="text-center text-muted py-4 small">No IP data extracted.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- AI Intelligence -->
+    <div class="col-md-8">
+        <div class="card bg-dark border-0 rounded-4 p-4 shadow-sm h-100" style="background: linear-gradient(145deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%) !important; backdrop-filter: blur(10px); border: 1px solid rgba(56, 189, 248, 0.1) !important;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold mb-0 text-white"><i class="fas fa-brain me-2 text-primary"></i>AI Intelligence Layer</h6>
+                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary">Auto-Generated</span>
+            </div>
+            
+            <p class="text-muted small lh-lg">{{ insights.summary }}</p>
+            
+            {% if anomalies %}
+            <div class="mt-3">
+                <h6 class="text-danger small fw-bold text-uppercase mb-2"><i class="fas fa-exclamation-triangle me-1"></i> Active Anomalies Detected</h6>
+                <div class="d-flex flex-column gap-2">
+                    {% for a in anomalies %}
+                    <div class="bg-danger bg-opacity-10 border border-danger border-opacity-25 rounded px-3 py-2 text-danger small">
+                        <strong>{{ a.type }}:</strong> {{ a.message }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <hr class="border-secondary opacity-25 my-4">
+
+            <h6 class="text-white small fw-bold mb-3"><i class="fas fa-robot me-2 text-primary"></i>Ask Your Logs (Natural Language)</h6>
+            <div class="input-group">
+                <input type="text" id="chatInput" class="form-control bg-transparent border-secondary text-white" placeholder="E.g., 'What caused the errors?' or 'Any brute force attempts?'">
+                <button class="btn btn-primary" onclick="sendQuestion()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+            <div id="chatBox" class="mt-3 small text-muted"></div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+        70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+    .pulse-dot {
+        animation: pulse 2s infinite;
+    }
+</style>
 
 {% endblock %}
 
@@ -149,20 +161,146 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-const ctx = document.getElementById('distributionChart');
+// Chat Logic
+function sendQuestion() {
+    const input = document.getElementById('chatInput');
+    const question = input.value.trim();
+    if(!question) return;
 
-new Chart(ctx, {
+    const chatBox = document.getElementById('chatBox');
+    chatBox.innerHTML = `<div class="mb-2"><span class="text-white fw-bold">You:</span> ${question}</div><div class="text-primary"><i class="fas fa-spinner fa-spin me-2"></i>AI is analyzing...</div>`;
+    input.value = '';
+
+    fetch('/ask', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ question: question, analysis_id: '{{ analysis_id }}' })
+    })
+    .then(r => r.json())
+    .then(data => {
+        // Simple markdown parsing for bold
+        let formattedAnswer = data.answer.replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>');
+        formattedAnswer = formattedAnswer.replace(/\n/g, '<br>');
+        
+        chatBox.innerHTML = `
+            <div class="mb-3 pb-3 border-bottom border-secondary border-opacity-25">
+                <span class="text-white fw-bold">You:</span> <span class="text-muted">${question}</span>
+            </div>
+            <div class="d-flex">
+                <div class="me-3 mt-1"><i class="fas fa-robot text-primary fs-5"></i></div>
+                <div class="lh-lg">${formattedAnswer}</div>
+            </div>
+        `;
+    });
+}
+
+document.getElementById('chatInput').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') sendQuestion();
+});
+
+// Chart.js Configuration
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.font.family = "'Inter', sans-serif";
+
+// Distribution Chart (Doughnut)
+const distCtx = document.getElementById('distributionChart').getContext('2d');
+new Chart(distCtx, {
     type: 'doughnut',
     data: {
         labels: ['Errors', 'Warnings', 'Failed', 'Timeouts'],
         datasets: [{
             data: [
-                {{ counts['ERROR'] }},
-                {{ counts['WARNING'] }},
-                {{ counts['FAILED'] }},
-                {{ counts['TIMEOUT'] }}
-            ]
+                {{ counts.get('ERROR', 0) }},
+                {{ counts.get('WARNING', 0) }},
+                {{ counts.get('FAILED', 0) }},
+                {{ counts.get('TIMEOUT', 0) }}
+            ],
+            backgroundColor: ['#ef4444', '#f59e0b', '#3b82f6', '#8b5cf6'],
+            borderWidth: 0,
+            hoverOffset: 4
         }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '75%',
+        plugins: {
+            legend: { position: 'bottom', labels: { boxWidth: 10, padding: 15 } }
+        }
+    }
+});
+
+// Traffic Over Time Chart (Line - Simulated Data for SaaS feel)
+const trafficCtx = document.getElementById('trafficChart').getContext('2d');
+
+// Generate mock time labels for last 60 mins
+const labels = [];
+let now = new Date();
+for(let i=60; i>=0; i-=5) {
+    let t = new Date(now.getTime() - i*60000);
+    labels.push(t.getHours() + ':' + t.getMinutes().toString().padStart(2, '0'));
+}
+
+// Generate mock data spikes based on actual counts
+const baseTraffic = Array.from({length: 13}, () => Math.floor(Math.random() * 50) + 100);
+const errorTraffic = Array.from({length: 13}, () => Math.floor(Math.random() * 5));
+
+// If we have actual errors, spike them at the end
+const totalErrors = {{ counts.get('ERROR', 0) }} + {{ counts.get('FAILED', 0) }};
+if(totalErrors > 0) {
+    errorTraffic[10] = Math.floor(totalErrors * 0.2);
+    errorTraffic[11] = Math.floor(totalErrors * 0.5);
+    errorTraffic[12] = Math.floor(totalErrors * 0.3);
+    
+    baseTraffic[11] += 200; // Spike in overall traffic too
+}
+
+new Chart(trafficCtx, {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: [
+            {
+                label: 'Total Requests',
+                data: baseTraffic,
+                borderColor: '#38bdf8',
+                backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                borderWidth: 2,
+                tension: 0.4,
+                fill: true
+            },
+            {
+                label: 'Errors/Failures',
+                data: errorTraffic,
+                borderColor: '#ef4444',
+                backgroundColor: 'transparent',
+                borderWidth: 2,
+                tension: 0.4,
+                borderDash: [5, 5]
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+            mode: 'index',
+            intersect: false,
+        },
+        plugins: {
+            legend: { position: 'top', align: 'end', labels: { boxWidth: 10, usePointStyle: true } }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: { color: 'rgba(255,255,255,0.05)' },
+                border: { display: false }
+            },
+            x: {
+                grid: { display: false },
+                border: { display: false }
+            }
+        }
     }
 });
 </script>

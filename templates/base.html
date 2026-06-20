@@ -8,8 +8,7 @@
     <title>NetAssist AI • Network Log Analyzer</title>
 
     <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -28,137 +27,78 @@
     <div class="bg-blur bg-blur-1"></div>
     <div class="bg-blur bg-blur-2"></div>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
-        <div class="container">
+    <button class="mobile-nav-toggle" onclick="document.getElementById('sidebar').classList.toggle('show')">
+        <i class="fas fa-bars"></i>
+    </button>
 
-            <!-- Logo -->
-            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
-
-                <div class="logo-icon me-3">
-                    <i class="fas fa-network-wired"></i>
-                </div>
-
-                <div>
-                    <div class="brand-title">
-                        NetAssist AI
+    <div class="app-wrapper">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a class="d-flex align-items-center text-decoration-none" href="{{ url_for('index') }}">
+                    <div class="logo-icon me-3" style="width: 40px; height: 40px; font-size: 1rem;">
+                        <i class="fas fa-network-wired"></i>
                     </div>
-
-                    <div class="brand-subtitle">
-                        Smart Network Monitoring
+                    <div>
+                        <div class="brand-title text-white mb-0" style="font-family: 'Poppins'; font-size: 1rem;">NetAssist AI</div>
+                        <div class="text-muted" style="font-size: 0.7rem; letter-spacing: 0.5px;">OBSERVABILITY</div>
                     </div>
-                </div>
+                </a>
+            </div>
 
+            <div class="px-3 mb-2 text-uppercase text-muted" style="font-size: 0.7rem; font-weight: 600; letter-spacing: 1px;">Platform</div>
+            
+            <a href="{{ url_for('index') }}" class="nav-item {% if request.endpoint == 'index' %}active{% endif %}">
+                <i class="fas fa-home fa-fw"></i> Overview
+            </a>
+            <a href="{{ url_for('dashboard_view') }}" class="nav-item {% if request.endpoint == 'dashboard_view' %}active{% endif %}">
+                <i class="fas fa-chart-line fa-fw"></i> Dashboard
+            </a>
+            <a href="{{ url_for('explorer') }}" class="nav-item {% if request.endpoint == 'explorer' %}active{% endif %}">
+                <i class="fas fa-search fa-fw"></i> Log Explorer
+            </a>
+            
+            <div class="px-3 mt-4 mb-2 text-uppercase text-muted" style="font-size: 0.7rem; font-weight: 600; letter-spacing: 1px;">Tools</div>
+            
+            <a href="{{ url_for('app_main') }}" class="nav-item {% if request.endpoint == 'app_main' %}active{% endif %}">
+                <i class="fas fa-upload fa-fw"></i> Import / Simulate
+            </a>
+            <a href="{{ url_for('docs') }}" class="nav-item {% if request.endpoint == 'docs' %}active{% endif %}">
+                <i class="fas fa-book fa-fw"></i> Documentation
             </a>
 
-            <!-- Right Side -->
-            <div class="d-flex align-items-center gap-3">
-
-                <div class="status-pill">
-                    <span class="status-dot"></span>
-                    System Active
-                </div>
-
-                <div class="text-end d-none d-md-block">
-                    <div class="small text-secondary">
-                        AI-Assisted
+            <div class="mt-auto px-4 pb-4">
+                <div class="card bg-dark border-secondary p-3 rounded-3" style="background: rgba(255,255,255,0.03) !important;">
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="status-dot"></span>
+                        <span class="text-white small fw-bold">System Live</span>
                     </div>
-
-                    <div style="font-size: 0.85rem; color: #94a3b8;">
-                        Log Intelligence Dashboard
-                    </div>
+                    <div class="text-muted" style="font-size: 0.75rem;">AI Monitoring Active</div>
                 </div>
-
             </div>
-
-        </div>
-    </nav>
-
-    <!-- Main Container -->
-    <div class="container mt-5">
-
-        <!-- Hero Section -->
-        <div class="hero-section mb-5">
-
-            <div class="hero-badge">
-                <i class="fas fa-shield-alt me-2"></i>
-                Real-Time Threat & Error Detection
-            </div>
-
-            <h1 class="hero-title mt-4">
-                Analyze Network Logs
-                <span class="gradient-text">Intelligently</span>
-            </h1>
-
-            <p class="hero-description mt-3">
-                Upload network logs, detect anomalies, monitor failures,
-                and generate AI-powered summaries in seconds.
-            </p>
-
-        </div>
-
-        <!-- Flash Messages -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-        {% for category, message in messages %}
-
-        <div class="alert alert-{{ category }} alert-dismissible fade show custom-alert" role="alert">
-
-            <i class="fas fa-circle-info me-2"></i>
-            {{ message }}
-
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close">
-            </button>
-
-        </div>
-
-        {% endfor %}
-        {% endif %}
-        {% endwith %}
+        </aside>
 
         <!-- Main Content -->
-        {% block content %}{% endblock %}
+        <main class="main-content">
+            
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="mb-4">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show custom-alert shadow-sm border-0" role="alert" style="background: rgba(15, 23, 42, 0.9);">
+                            <i class="fas fa-info-circle me-2 text-{{ category }}"></i>
+                            {{ message }}
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
 
+            {% block content %}{% endblock %}
+        </main>
     </div>
-
-    <!-- Footer -->
-    <footer class="footer-section mt-5">
-
-        <div class="container">
-
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
-
-                <div class="footer-left mb-3 mb-md-0">
-
-                    <div class="footer-logo">
-                        <i class="fas fa-microchip me-2"></i>
-                        NetAssist AI
-                    </div>
-
-                    <div class="footer-text">
-                        Built for network diagnostics & intelligent log monitoring.
-                    </div>
-
-                </div>
-
-                <div class="footer-right text-md-end">
-
-                    <div class="footer-status">
-                        <i class="fas fa-circle text-success me-2"></i>
-                        Monitoring Services Online
-                    </div>
-
-                    <div class="footer-version">
-                        Version 1.0 • Student Project
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </footer>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -166,5 +106,4 @@
     {% block scripts %}{% endblock %}
 
 </body>
-
 </html>

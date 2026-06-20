@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="mb-4">
+    <h3 class="fw-bold text-white mb-1">Documentation & API</h3>
+    <p class="text-muted small mb-0">System Architecture, Endpoints, and Integrations</p>
+</div>
+
+<div class="row g-4">
+    <!-- Architecture Diagram -->
+    <div class="col-12">
+        <div class="card bg-dark border-0 rounded-4 p-4 shadow-sm" style="background: rgba(30, 41, 59, 0.5) !important; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05) !important;">
+            <h6 class="text-white fw-bold mb-4"><i class="fas fa-project-diagram me-2 text-primary"></i> System Architecture</h6>
+            
+            <div class="bg-black bg-opacity-25 rounded p-4 text-center border border-secondary border-opacity-25" style="font-family: monospace; line-height: 1.8;">
+                <div class="d-flex justify-content-center align-items-center gap-4 text-muted small flex-wrap">
+                    <div class="border border-secondary p-3 rounded" style="background: rgba(56, 189, 248, 0.05);">
+                        <i class="fas fa-upload fa-2x mb-2 text-primary"></i><br>
+                        Raw Log Ingestion<br>
+                        (Nginx, Apache, Syslog)
+                    </div>
+                    <i class="fas fa-arrow-right"></i>
+                    <div class="border border-secondary p-3 rounded" style="background: rgba(99, 102, 241, 0.05);">
+                        <i class="fas fa-cogs fa-2x mb-2 text-secondary"></i><br>
+                        Regex Parsing Engine<br>
+                        (Python Backend)
+                    </div>
+                    <i class="fas fa-arrow-right"></i>
+                    <div class="border border-danger p-3 rounded" style="background: rgba(239, 68, 68, 0.05);">
+                        <i class="fas fa-brain fa-2x mb-2 text-danger"></i><br>
+                        AI Anomaly Detection<br>
+                        (Rules & Thresholds)
+                    </div>
+                    <i class="fas fa-arrow-right"></i>
+                    <div class="border border-success p-3 rounded" style="background: rgba(16, 185, 129, 0.05);">
+                        <i class="fas fa-chart-line fa-2x mb-2 text-success"></i><br>
+                        Observability Dashboard<br>
+                        (Flask + Chart.js)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Documentation -->
+    <div class="col-md-8">
+        <div class="card bg-dark border-0 rounded-4 p-4 shadow-sm h-100" style="background: rgba(30, 41, 59, 0.5) !important; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05) !important;">
+            <h6 class="text-white fw-bold mb-4"><i class="fas fa-code me-2 text-info"></i> API Reference</h6>
+            
+            <div class="mb-4">
+                <span class="badge bg-success me-2">GET</span> <code class="text-white">/export/json/{analysis_id}</code>
+                <p class="text-muted small mt-2">Returns the complete analysis payload, including event counts, anomalies, and AI insights in JSON format. Suitable for integration with external SIEM tools.</p>
+            </div>
+            
+            <div class="mb-4">
+                <span class="badge bg-success me-2">GET</span> <code class="text-white">/export/csv/{analysis_id}</code>
+                <p class="text-muted small mt-2">Exports all identified critical events (Errors, Warnings, Failures, Timeouts) into a flat CSV format for spreadsheet analysis.</p>
+            </div>
+            
+            <div class="mb-2">
+                <span class="badge bg-primary me-2">POST</span> <code class="text-white">/ask</code>
+                <p class="text-muted small mt-2">Query the AI intelligence layer using natural language. Requires JSON payload: <code>{"question": "string", "analysis_id": "string"}</code>.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trust Signals -->
+    <div class="col-md-4">
+        <div class="card bg-dark border-0 rounded-4 p-4 shadow-sm h-100" style="background: rgba(30, 41, 59, 0.5) !important; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05) !important;">
+            <h6 class="text-white fw-bold mb-4"><i class="fas fa-shield-check me-2 text-warning"></i> Tech Stack</h6>
+            
+            <div class="d-flex flex-column gap-3">
+                <div class="d-flex align-items-center">
+                    <img src="https://img.shields.io/badge/Python-3.10+-blue?style=flat-square&logo=python" alt="Python" class="me-3">
+                    <span class="text-muted small">Backend Engine</span>
+                </div>
+                <div class="d-flex align-items-center">
+                    <img src="https://img.shields.io/badge/Flask-Web%20Framework-lightgrey?style=flat-square&logo=flask" alt="Flask" class="me-3">
+                    <span class="text-muted small">Routing & API</span>
+                </div>
+                <div class="d-flex align-items-center">
+                    <img src="https://img.shields.io/badge/Bootstrap-5.3-purple?style=flat-square&logo=bootstrap" alt="Bootstrap" class="me-3">
+                    <span class="text-muted small">UI Grid System</span>
+                </div>
+                <div class="d-flex align-items-center">
+                    <img src="https://img.shields.io/badge/Chart.js-Data%20Viz-ff6384?style=flat-square&logo=chartdotjs" alt="Chart.js" class="me-3">
+                    <span class="text-muted small">Analytics Visuals</span>
+                </div>
+            </div>
+
+            <hr class="border-secondary opacity-25 my-4">
+            
+            <a href="https://github.com" target="_blank" class="btn btn-outline-secondary w-100 text-white" style="background: rgba(255,255,255,0.05);">
+                <i class="fab fa-github me-2"></i> View on GitHub
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
