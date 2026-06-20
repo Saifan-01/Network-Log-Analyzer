@@ -9,7 +9,6 @@
     </div>
 </div>
 
-<!-- Severity Banner -->
 <div class="card card-custom p-4 mb-4"
     style="border-left:6px solid {% if report.severity == 'CRITICAL' %}#b91c1c{% elif report.severity == 'HIGH' %}#b45309{% elif report.severity == 'MEDIUM' %}#1d4ed8{% else %}#047857{% endif %};">
     <div class="d-flex align-items-center gap-3">
@@ -27,66 +26,66 @@
             <p class="text-muted small mb-0">{{ report.severity_description }}</p>
         </div>
         <div class="ms-auto text-end">
-            <div class="fw-bold fs-4" style="color:#f8fafc;">{{ report.total_events }}</div>
+            <div class="fw-bold fs-4">{{ report.total_events }}</div>
             <div class="text-muted small">Total Events</div>
         </div>
     </div>
 </div>
 
-<!-- Metrics Row -->
 <div class="row g-3 mb-4">
     {% for key, val in report.counts.items() %}
     <div class="col-6 col-md-3">
         <div class="card card-custom stat-card {{ key | lower }} text-center p-3">
             <h4 class="fw-bold mb-1">{{ val }}</h4>
-            <span class="text-uppercase fw-bold" style="font-size:0.7rem; letter-spacing:1px; color:#fff;">{{ key }}</span>
+            <span class="text-uppercase fw-bold" style="font-size:0.7rem; letter-spacing:1px;">{{ key }}</span>
         </div>
     </div>
     {% endfor %}
 </div>
 
 <div class="row g-4">
-    <!-- Root Causes -->
+
     <div class="col-md-6">
         <div class="card card-custom p-4 h-100">
-            <h6 class="fw-bold mb-3 text-uppercase" style="font-size:0.75rem; letter-spacing:1px; color:#94a3b8;"><i class="fas fa-search me-2 text-warning"></i>Root Cause Analysis</h6>
+            <h6 class="fw-bold mb-3 text-uppercase" style="font-size:0.75rem; letter-spacing:1px;"><i class="fas fa-search me-2 text-warning"></i>Root Cause Analysis</h6>
             <ul class="list-unstyled mb-0">
                 {% for cause in report.root_causes %}
                 <li class="mb-3 d-flex gap-3">
                     <i class="fas fa-circle-dot text-danger mt-1 flex-shrink-0"></i>
-                    <span style="color:#cbd5e1;">{{ cause }}</span>
+                    <span>{{ cause }}</span>
                 </li>
                 {% endfor %}
             </ul>
         </div>
     </div>
 
-    <!-- Recommended Actions -->
     <div class="col-md-6">
         <div class="card card-custom p-4 h-100">
-            <h6 class="fw-bold mb-3 text-uppercase" style="font-size:0.75rem; letter-spacing:1px; color:#94a3b8;"><i class="fas fa-tools me-2 text-primary"></i>Recommended Actions</h6>
+            <h6 class="fw-bold mb-3 text-uppercase" style="font-size:0.75rem; letter-spacing:1px;"><i class="fas fa-tools me-2 text-primary"></i>Recommended Actions</h6>
             <ol class="mb-0 ps-3">
                 {% for action in report.recommended_actions %}
-                <li class="mb-3" style="color:#cbd5e1;">{{ action }}</li>
+                <li class="mb-3">{{ action }}</li>
                 {% endfor %}
             </ol>
         </div>
     </div>
+
 </div>
 
-<!-- Anomalies -->
 {% if report.anomalies %}
 <div class="card card-custom p-4 mt-4">
-    <h6 class="fw-bold mb-3 text-uppercase" style="font-size:0.75rem; letter-spacing:1px; color:#94a3b8;"><i class="fas fa-radiation-alt me-2 text-danger"></i>Detected Anomalies</h6>
+    <h6 class="fw-bold mb-3 text-uppercase" style="font-size:0.75rem; letter-spacing:1px;"><i class="fas fa-radiation-alt me-2 text-danger"></i>Detected Anomalies</h6>
     <div class="row g-3">
         {% for anomaly in report.anomalies %}
         <div class="col-md-6">
-            <div class="p-3 rounded-3" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07);">
+            <div class="p-3 rounded-3">
                 <div class="d-flex align-items-center gap-2 mb-1">
-                    <span class="badge {% if anomaly.severity == 'CRITICAL' %}bg-danger{% elif anomaly.severity == 'HIGH' %}bg-warning text-dark{% else %}bg-primary{% endif %}">{{ anomaly.severity }}</span>
-                    <span class="fw-bold small text-white">{{ anomaly.type }}</span>
+                    <span class="badge {% if anomaly.severity == 'CRITICAL' %}bg-danger{% elif anomaly.severity == 'HIGH' %}bg-warning text-dark{% else %}bg-primary{% endif %}">
+                        {{ anomaly.severity }}
+                    </span>
+                    <span class="fw-bold small">{{ anomaly.type }}</span>
                 </div>
-                <p class="small mb-0" style="color:#94a3b8;">{{ anomaly.message }}</p>
+                <p class="small mb-0">{{ anomaly.message }}</p>
             </div>
         </div>
         {% endfor %}
@@ -94,11 +93,12 @@
 </div>
 {% endif %}
 
-<!-- AI Summary -->
 <div class="card card-custom ai-summary-card p-4 mt-4 mb-5">
     <div class="d-flex align-items-center mb-2">
         <i class="fas fa-robot text-primary me-2 fa-lg"></i>
         <h6 class="fw-bold mb-0 gradient-text">AI Summary</h6>
     </div>
-    <p class="mb-0" style="color:#e2e8f0;">{{ report.summary }}</p>
+    <p class="mb-0">{{ report.summary }}</p>
 </div>
+
+{% endblock %}
