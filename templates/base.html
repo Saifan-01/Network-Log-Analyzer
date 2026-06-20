@@ -20,6 +20,31 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v={{ range(1, 100000) | random }}">
 
+    <!-- Darker Text Override (ONLY ADDITION) -->
+    <style>
+        body {
+            color: #0f172a !important;
+        }
+
+        p, span, div, a, li, small {
+            color: #0f172a;
+        }
+
+        .text-secondary {
+            color: #334155 !important;
+        }
+
+        .footer-text,
+        .footer-version,
+        .brand-subtitle {
+            color: #334155 !important;
+        }
+
+        .hero-description {
+            color: #1f2937 !important;
+        }
+    </style>
+
 </head>
 
 <body>
