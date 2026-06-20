@@ -4,7 +4,6 @@
 <div class="row justify-content-center">
     <div class="col-lg-9">
 
-        <!-- Hero -->
         <div class="hero-section mb-5">
             <div class="hero-badge mb-3"><i class="fas fa-bolt me-2"></i>AI-Powered Log Intelligence</div>
             <h1 class="hero-title mt-3 mb-3">
@@ -13,18 +12,19 @@
             <p class="hero-description mb-5">Upload your server, router, or application logs. Our AI engine automatically detects errors, anomalies, and generates actionable insights in seconds.</p>
         </div>
 
-        <!-- Upload Card -->
         <div class="card card-custom p-5 mb-5">
             <form action="{{ url_for('upload_file') }}" method="POST" enctype="multipart/form-data">
                 <div class="upload-area mb-4" id="uploadArea" onclick="document.getElementById('fileInput').click()">
                     <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-primary"></i>
                     <h5 class="mb-1 fw-bold">Click to browse or drag & drop</h5>
-                    <p class="text-muted small mb-0">Supported: <b>.log</b>, <b>.txt</b>, <b>.json</b></p>
+                    <p class="small mb-0">Supported: <b>.log</b>, <b>.txt</b>, <b>.json</b></p>
                     <input type="file" id="fileInput" name="file" class="d-none" accept=".log,.txt,.json" onchange="updateFileName(this)">
                 </div>
-                <div id="fileNameDisplay" class="text-center text-info mb-4" style="display:none;">
+
+                <div id="fileNameDisplay" class="text-center mb-4" style="display:none;">
                     <i class="fas fa-file-alt me-2"></i><span id="fName"></span>
                 </div>
+
                 <div class="d-grid">
                     <button type="submit" class="btn btn-custom btn-lg">
                         <i class="fas fa-magic me-2"></i>Analyze Log
@@ -33,31 +33,30 @@
             </form>
         </div>
 
-        <!-- Attack Simulation -->
         <div class="card card-custom p-4 mb-5">
             <h5 class="fw-bold mb-1"><i class="fas fa-flask text-warning me-2"></i>Attack Simulation Mode</h5>
-            <p class="text-muted small mb-3">Instantly load realistic attack scenarios to see the analyzer in action — no file needed.</p>
+            <p class="small mb-3">Instantly load realistic attack scenarios to see the analyzer in action — no file needed.</p>
             <div class="row g-2">
                 <div class="col-6 col-md-3">
-                    <a href="/simulate/brute_force" class="btn w-100 sim-btn" style="background:rgba(185,28,28,0.15); border:1px solid rgba(185,28,28,0.4); color:#fca5a5;">
+                    <a href="/simulate/brute_force" class="btn w-100 sim-btn">
                         <i class="fas fa-user-secret d-block mb-1 fs-4"></i>
                         <span class="small fw-bold">Brute Force</span>
                     </a>
                 </div>
                 <div class="col-6 col-md-3">
-                    <a href="/simulate/dns_attack" class="btn w-100 sim-btn" style="background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.4); color:#67e8f9;">
+                    <a href="/simulate/dns_attack" class="btn w-100 sim-btn">
                         <i class="fas fa-globe d-block mb-1 fs-4"></i>
                         <span class="small fw-bold">DNS Attack</span>
                     </a>
                 </div>
                 <div class="col-6 col-md-3">
-                    <a href="/simulate/server_crash" class="btn w-100 sim-btn" style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.4); color:#fca5a5;">
+                    <a href="/simulate/server_crash" class="btn w-100 sim-btn">
                         <i class="fas fa-server d-block mb-1 fs-4"></i>
                         <span class="small fw-bold">Server Crash</span>
                     </a>
                 </div>
                 <div class="col-6 col-md-3">
-                    <a href="/simulate/router" class="btn w-100 sim-btn" style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.4); color:#fcd34d;">
+                    <a href="/simulate/router" class="btn w-100 sim-btn">
                         <i class="fas fa-network-wired d-block mb-1 fs-4"></i>
                         <span class="small fw-bold">Router Issue</span>
                     </a>
@@ -65,27 +64,26 @@
             </div>
         </div>
 
-        <!-- Feature Cards -->
         <div class="row g-3 text-center">
             <div class="col-md-4">
                 <div class="card card-custom p-4">
-                    <i class="fas fa-search fa-2x text-primary mb-3"></i>
+                    <i class="fas fa-search fa-2x mb-3"></i>
                     <h6 class="fw-bold">Smart Parsing</h6>
-                    <p class="text-muted small mb-0">Regex-powered scanning of ERROR, WARNING, FAILED & TIMEOUT events.</p>
+                    <p class="small mb-0">Regex-powered scanning of ERROR, WARNING, FAILED & TIMEOUT events.</p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card card-custom p-4">
-                    <i class="fas fa-brain fa-2x text-primary mb-3"></i>
+                    <i class="fas fa-brain fa-2x mb-3"></i>
                     <h6 class="fw-bold">AI Chat</h6>
-                    <p class="text-muted small mb-0">Ask natural language questions about your logs and get instant answers.</p>
+                    <p class="small mb-0">Ask natural language questions about your logs and get instant answers.</p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card card-custom p-4">
-                    <i class="fas fa-shield-alt fa-2x text-primary mb-3"></i>
+                    <i class="fas fa-shield-alt fa-2x mb-3"></i>
                     <h6 class="fw-bold">Incident Reports</h6>
-                    <p class="text-muted small mb-0">Auto-generate structured incident reports with severity and root cause.</p>
+                    <p class="small mb-0">Auto-generate structured incident reports with severity and root cause.</p>
                 </div>
             </div>
         </div>
@@ -102,15 +100,28 @@ function updateFileName(input) {
 }
 
 const uploadArea = document.getElementById('uploadArea');
-['dragenter','dragover','dragleave','drop'].forEach(e => uploadArea.addEventListener(e, ev => { ev.preventDefault(); ev.stopPropagation(); }));
-['dragenter','dragover'].forEach(e => uploadArea.addEventListener(e, () => {
-    uploadArea.style.borderColor = 'var(--primary)';
-    uploadArea.style.background = 'rgba(56,189,248,0.08)';
-}));
-['dragleave','drop'].forEach(e => uploadArea.addEventListener(e, () => {
-    uploadArea.style.borderColor = 'rgba(255,255,255,0.15)';
-    uploadArea.style.background = 'rgba(255,255,255,0.03)';
-}));
+
+['dragenter','dragover','dragleave','drop'].forEach(e =>
+    uploadArea.addEventListener(e, ev => {
+        ev.preventDefault();
+        ev.stopPropagation();
+    })
+);
+
+['dragenter','dragover'].forEach(e =>
+    uploadArea.addEventListener(e, () => {
+        uploadArea.style.borderColor = 'var(--primary)';
+        uploadArea.style.background = 'rgba(56,189,248,0.08)';
+    })
+);
+
+['dragleave','drop'].forEach(e =>
+    uploadArea.addEventListener(e, () => {
+        uploadArea.style.borderColor = 'rgba(255,255,255,0.15)';
+        uploadArea.style.background = 'rgba(255,255,255,0.03)';
+    })
+);
+
 uploadArea.addEventListener('drop', e => {
     document.getElementById('fileInput').files = e.dataTransfer.files;
     updateFileName(document.getElementById('fileInput'));
