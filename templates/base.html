@@ -5,148 +5,153 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>NetAssist AI • Network Log Analyzer</title>
+    <title>NetAssist AI • Security & Log Intelligence</title>
 
-    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
 
-    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v={{ range(1, 100000) | random }}">
 
-    <!-- FORCE WHITE TEXT (ONLY CHANGE) -->
     <style>
         body {
-            color: #ffffff !important;
+            background: #0b1220;
+            color: #e5e7eb;
+            font-family: 'Poppins', sans-serif;
         }
 
-        p, span, small, li, td, th, h1, h2, h3, h4, h5, h6, div {
-            color: #ffffff !important;
+        .navbar-custom {
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            backdrop-filter: blur(10px);
         }
 
-        a {
-            color: #ffffff !important;
-        }
-
-        .text-muted {
-            color: #cbd5e1 !important;
-        }
-
-        .brand-subtitle,
-        .footer-text,
-        .footer-version {
-            color: #cbd5e1 !important;
-        }
-
-        .table,
-        .table td,
-        .table th {
-            color: #ffffff !important;
+        .container {
+            max-width: 1200px;
         }
 
         .card,
-        .card-custom,
-        .alert {
-            color: #ffffff !important;
+        .card-custom {
+            background: rgba(17, 25, 40, 0.85);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.35);
         }
 
-        input,
-        textarea {
-            color: #ffffff !important;
+        h1,h2,h3,h4,h5,h6 {
+            color: #f8fafc;
         }
 
-        .small {
-            color: #e2e8f0 !important;
+        p, span, small, li, td, th {
+            color: #cbd5e1;
+        }
+
+        .text-muted {
+            color: #94a3b8 !important;
+        }
+
+        a {
+            color: #38bdf8;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #0ea5e9;
+        }
+
+        .status-pill {
+            background: rgba(34,197,94,0.15);
+            color: #4ade80;
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            border: 1px solid rgba(34,197,94,0.3);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
+        .footer-section {
+            border-top: 1px solid rgba(255,255,255,0.06);
+            background: rgba(15, 23, 42, 0.6);
+            margin-top: 60px;
+            padding: 20px 0;
+        }
+
+        .footer-logo {
+            color: #f8fafc;
+            font-weight: 600;
+        }
+
+        .footer-text, .footer-version {
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
         }
     </style>
-
 </head>
 
 <body>
 
-    <!-- Background Blur Circles -->
-    <div class="bg-blur bg-blur-1"></div>
-    <div class="bg-blur bg-blur-2"></div>
-
-    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
         <div class="container">
 
-            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
-
-                <div class="logo-icon me-3">
-                    <i class="fas fa-network-wired"></i>
-                </div>
-
-                <div>
-                    <div class="brand-title">
-                        NetAssist AI
-                    </div>
-
-                    <div class="brand-subtitle">
-                        Smart Network Monitoring
-                    </div>
-                </div>
-
+            <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">
+                <i class="fas fa-shield-alt me-2 text-info"></i>
+                NetAssist AI
             </a>
 
-            <div class="d-flex align-items-center gap-3">
-
+            <div class="d-flex align-items-center gap-2">
                 <div class="status-pill">
                     <span class="status-dot"></span>
-                    System Active
+                    LIVE MONITORING
                 </div>
-
-                <div class="text-end d-none d-md-block">
-                    <div class="small text-secondary">
-                        AI-Assisted
-                    </div>
-
-                    <div style="font-size: 0.85rem;">
-                        Log Intelligence Dashboard
-                    </div>
-                </div>
-
             </div>
 
         </div>
     </nav>
 
-    <div class="container mt-5">
+    <div class="container mt-4">
         {% block content %}{% endblock %}
     </div>
 
-    <footer class="footer-section mt-5">
-        <div class="container">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+    <footer class="footer-section">
+        <div class="container d-flex justify-content-between">
 
-                <div class="footer-left mb-3 mb-md-0">
-                    <div class="footer-logo">
-                        <i class="fas fa-microchip me-2"></i>
-                        NetAssist AI
-                    </div>
-                    <div class="footer-text">
-                        Built for network diagnostics & intelligent log monitoring.
-                    </div>
-                </div>
-
-                <div class="footer-right text-md-end">
-                    <div class="footer-status">
-                        <i class="fas fa-circle text-success me-2"></i>
-                        Monitoring Services Online
-                    </div>
-                    <div class="footer-version">
-                        Version 1.0 • Student Project
-                    </div>
-                </div>
-
+            <div>
+                <div class="footer-logo">NetAssist AI</div>
+                <div class="footer-text">Security & Log Intelligence Platform</div>
             </div>
+
+            <div class="text-end">
+                <div class="footer-text">System Status: Online</div>
+                <div class="footer-version">v1.0 • SOC Simulation</div>
+            </div>
+
         </div>
     </footer>
 
@@ -155,4 +160,5 @@
     {% block scripts %}{% endblock %}
 
 </body>
+
 </html>
