@@ -59,6 +59,44 @@ def generate_incident_report(counts, issues, insights, anomalies, filename):
     if not root_causes:
         root_causes = ["No significant root cause identified. Log appears clean."]
 
+def generate_security_scores(counts, anomalies):
+    # Segmented Scores
+    encryption = 100 - (counts.get('WARNING', 0) * 2)
+    exposure = 100 - (len(anomalies) * 10) - (counts.get('ERROR', 0) * 3)
+    auth = 100 - (counts.get('FAILED', 0) * 8)
+    
+    # Cap between 0 and 100
+    encryption = max(0, min(100, encryption))
+    exposure = max(0, min(100, exposure))
+    auth = max(0, min(100, auth))
+    
+    overall = int((encryption + exposure + auth) / 3)
+    
+    return {
+        'encryption': encryption,
+        'exposure': exposure,
+        'auth': auth,
+        'overall': overall
+    }
+
+def generate_root_cause_analysis(counts, issues):
+    analysis = "System operating normally."
+    
+    if counts.get('FAILED', 0) >= 10:
+        analysis = "Likely under an active Brute-Force or Credential Stuffing attack targeting authentication endpoints."
+    elif counts.get('ERROR', 0) >= 10:
+        analysis = "Severe Application Instability detected, possibly due to a recent deployment or database failure."
+    elif counts.get('TIMEOUT', 0) >= 5:
+        analysis = "Network routing failure or extreme upstream latency causing persistent connection drops."
+    elif counts.get('FAILED', 0) >= 3:
+        analysis = "Multiple authentication failures detected. Review ACLs and user credentials."
+    elif counts.get('ERROR', 0) >= 3:
+        analysis = "Isolated application errors detected. Check application stack traces."
+    elif counts.get('WARNING', 0) >= 5:
+        analysis = "Elevated warning levels suggest resource saturation or configuration issues."
+        
+    return analysis
+
     return {
         "filename": filename,
         "severity": severity,
@@ -164,5 +202,29 @@ def answer_question(question, counts, issues, anomalies):
     elif any(w in q for w in ['total', 'count', 'how many', 'number']):
         return f"I found **{total} total critical events**.\n\nHere is the breakdown:\n• **Errors:** {counts.get('ERROR',0)}\n• **Warnings:** {counts.get('WARNING',0)}\n• **Failed:** {counts.get('FAILED',0)}\n• **Timeouts:** {counts.get('TIMEOUT',0)}"
 
+    # Fallback: Deep Search through the log lines
     else:
-        return f"I analyzed this log and found **{total} total events**. I'm an AI specialized in analyzing log patterns. Try asking me specific questions like:\n\n• *'Summarize the log'*\n• *'What caused the errors?'*\n• *'Any suspicious IP activity?'*\n• *'What should I fix?'*"
+        # Ignore common stop words
+        stop_words = {'what', 'why', 'how', 'when', 'where', 'is', 'are', 'do', 'does', 'did', 'a', 'the', 'in', 'on', 'at', 'to', 'for', 'of', 'and', 'or', 'log', 'logs', 'show', 'me', 'tell', 'about'}
+        search_terms = [w for w in q.split() if w not in stop_words and len(w) > 2]
+        
+        if not search_terms:
+            return "I can answer specific questions about errors, warnings, IPs, anomalies, or search for exact keywords in your logs. Try asking something like: 'Show me database errors' or 'What happened with 192.168.1.5?'"
+
+        matches = []
+        for issue in issues:
+            content_lower = issue['content'].lower()
+            if any(term in content_lower for term in search_terms):
+                matches.append(issue)
+                if len(matches) >= 5: # Limit results
+                    break
+                    
+        if matches:
+            response = f"I searched the logs for your query and found {len(matches)} relevant events:\n\n"
+            for m in matches:
+                response += f"• **Line {m['line_num']} [{m['type']}]**: `{m['content']}`\n"
+            if len(issues) > 5:
+                response += "\n*Showing top 5 matches only.*"
+            return response
+            
+        return f"I searched the logs for **'{' '.join(search_terms)}'** but couldn't find any exact matches. Try checking the **Log Explorer** or asking about 'errors', 'timeouts', or 'anomalies'."

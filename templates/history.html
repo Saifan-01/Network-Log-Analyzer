@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold text-white mb-0">Your Scan History</h3>
+</div>
+
+<div class="card bg-dark border-0 rounded-4 shadow-sm" style="background: rgba(30, 41, 59, 0.5) !important; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05) !important;">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover mb-0 align-middle">
+                <thead>
+                    <tr style="border-bottom: 2px solid rgba(255,255,255,0.1);">
+                        <th class="text-muted small fw-bold text-uppercase py-3 px-4">Date</th>
+                        <th class="text-muted small fw-bold text-uppercase py-3">File / Source</th>
+                        <th class="text-muted small fw-bold text-uppercase py-3 text-center">Errors</th>
+                        <th class="text-muted small fw-bold text-uppercase py-3 text-center">Warnings</th>
+                        <th class="text-muted small fw-bold text-uppercase py-3 text-center">Failed Auth</th>
+                        <th class="text-muted small fw-bold text-uppercase py-3">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records %}
+                    <tr>
+                        <td class="px-4 text-white small">{{ record.upload_time }}</td>
+                        <td class="text-info fw-bold small"><i class="fas fa-file-alt me-2 text-muted"></i>{{ record.filename }}</td>
+                        <td class="text-center">
+                            {% if record.error_count > 0 %}
+                                <span class="badge bg-danger rounded-pill">{{ record.error_count }}</span>
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if record.warning_count > 0 %}
+                                <span class="badge bg-warning text-dark rounded-pill">{{ record.warning_count }}</span>
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if record.failed_count > 0 %}
+                                <span class="badge bg-primary rounded-pill">{{ record.failed_count }}</span>
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="/export/pdf/{{ record.id }}" class="btn btn-sm btn-outline-light"><i class="fas fa-file-pdf me-1 text-danger"></i> PDF Report</a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="fas fa-history fa-2x mb-3 d-block opacity-50"></i>
+                            No historical scans found. <br> <a href="/app" class="text-primary mt-2 d-inline-block">Run your first scan</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

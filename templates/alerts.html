@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold text-white mb-0">Alerting Engine</h3>
+</div>
+
+<div class="row g-4">
+    <!-- Active Alerts -->
+    <div class="col-md-8">
+        <div class="p-0 h-100" style="background: #000000; border: 1px solid #333333;">
+            <div class="d-flex justify-content-between align-items-center p-4 border-bottom border-secondary border-opacity-25">
+                <h6 class="fw-bold mb-0 text-white"><i class="fas fa-bell me-2 text-warning"></i>Active Alerts</h6>
+                <form method="POST" action="/alerts" class="m-0">
+                    <input type="hidden" name="action" value="clear">
+                    <button type="submit" class="btn btn-sm btn-outline-secondary">Clear All</button>
+                </form>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush" id="alertsList">
+                    {% for alert in active_alerts %}
+                    <div class="list-group-item bg-transparent border-secondary border-opacity-25 px-4 py-3">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1 text-white small fw-bold">{{ alert.metric | upper }} Alert</h6>
+                            <small class="text-muted">{{ alert.timestamp }}</small>
+                        </div>
+                        <p class="mb-1 text-danger small"><i class="fas fa-exclamation-circle me-1"></i> {{ alert.message }}</p>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5 text-muted small">
+                        <i class="fas fa-check-circle fa-2x mb-3 text-success opacity-50 d-block"></i>
+                        No active alerts right now.
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Rules -->
+    <div class="col-md-4">
+        <div class="mb-4" style="background: #000000; border: 1px solid #333333;">
+            <div class="p-4 border-bottom border-secondary border-opacity-25">
+                <h6 class="fw-bold mb-0 text-white"><i class="fas fa-cog me-2 text-primary"></i>Configured Rules</h6>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for rule in rules %}
+                    <li class="list-group-item bg-transparent border-secondary border-opacity-25 px-4 py-3 d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-white small fw-bold">{{ rule.metric | upper }}</span>
+                            <span class="badge bg-secondary ms-2">{{ rule.condition }} {{ rule.threshold }}</span>
+                        </div>
+                        <form method="POST" action="/alerts" class="m-0">
+                            <input type="hidden" name="action" value="delete">
+                            <input type="hidden" name="rule_id" value="{{ rule.id }}">
+                            <button type="submit" class="btn btn-sm btn-link text-danger p-0"><i class="fas fa-trash"></i></button>
+                        </form>
+                    </li>
+                    {% else %}
+                    <li class="list-group-item bg-transparent text-center text-muted small py-4 border-0">No rules configured.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="p-0" style="background: #000000; border: 1px solid #333333;">
+            <div class="p-4">
+                <h6 class="fw-bold mb-3 text-white">Add New Rule</h6>
+                <form method="POST" action="/alerts">
+                    <input type="hidden" name="action" value="add">
+                    <div class="mb-2">
+                        <select class="form-select form-select-sm" name="metric" required style="background: #000; border: 1px solid #333; color: #fff; border-radius: 0;">
+                            <option value="">Select Metric...</option>
+                            <optgroup label="Live Telemetry">
+                                <option value="cpu">CPU Usage (%)</option>
+                                <option value="memory">Memory Usage (%)</option>
+                            </optgroup>
+                            <optgroup label="Log Analysis Metrics">
+                                <option value="ERROR">Total Errors</option>
+                                <option value="WARNING">Total Warnings</option>
+                                <option value="FAILED">Total Failed Events</option>
+                                <option value="TIMEOUT">Total Timeouts</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <select class="form-select form-select-sm" name="condition" required style="background: #000; border: 1px solid #333; color: #fff; border-radius: 0;">
+                            <option value=">">Greater Than (>)</option>
+                            <option value="<">Less Than (<)</option>
+                            <option value="==">Equal To (==)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                    <div class="mb-3">
+                        <input type="number" class="form-control form-control-sm" name="threshold" placeholder="Threshold Value" required style="background: #000; border: 1px solid #333; color: #fff; border-radius: 0;">
+                    </div>
+                    <div class="mb-4">
+                        <input type="url" class="form-control form-control-sm" name="webhook_url" placeholder="Slack/Discord Webhook URL (Optional)" style="background: #000; border: 1px dashed #555; color: #0f0; border-radius: 0; font-family: monospace;">
+                    </div>
+                    <button type="submit" class="btn btn-sm btn-outline-light w-100 rounded-0" style="font-family: monospace; letter-spacing: 2px;">ADD DIRECTIVE</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+<script>
+    const socket = io();
+    const currentUserId = "{{ current_user.id if current_user.is_authenticated else 'null' }}";
+    
+    socket.on('new_alert', function(data) {
+        if (currentUserId === 'null' || data.user_id == currentUserId) {
+            location.reload();
+        }
+    });
+</script>
+{% endblock %}

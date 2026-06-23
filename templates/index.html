@@ -4,30 +4,36 @@
 <div class="row justify-content-center">
     <div class="col-lg-9">
 
-        <div class="hero-section mb-5">
+        <div class="hero-section mb-5 text-white">
             <div class="hero-badge mb-3"><i class="fas fa-bolt me-2"></i>AI-Powered Log Intelligence</div>
-            <h1 class="hero-title mt-3 mb-3">
+            <h1 class="hero-title mt-3 mb-3 text-white">
                 Analyze Logs <span class="gradient-text">Instantly</span>
             </h1>
-            <p class="hero-description mb-5">Upload your server, router, or application logs. Our AI engine automatically detects errors, anomalies, and generates actionable insights in seconds.</p>
+            <p class="hero-description mb-5 text-white">Upload your server, router, or application logs. Our AI engine automatically detects errors, anomalies, and generates actionable insights in seconds.</p>
         </div>
 
-        <div class="card card-custom p-5 mb-5">
-            <form action="{{ url_for('upload_file') }}" method="POST" enctype="multipart/form-data">
-                <div class="upload-area mb-4" id="uploadArea" onclick="document.getElementById('fileInput').click()">
-                    <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-primary"></i>
-                    <h5 class="mb-1 fw-bold">Click to browse or drag & drop</h5>
-                    <p class="small mb-0">Supported: <b>.log</b>, <b>.txt</b>, <b>.json</b></p>
+        <div class="p-0 mb-5" style="border: 2px solid #333333; background: #000000;">
+            <form id="uploadForm" action="{{ url_for('upload_file') }}" method="POST" enctype="multipart/form-data">
+                <div class="upload-area text-center" id="uploadArea" onclick="document.getElementById('fileInput').click()" style="padding: 80px 20px; border: 2px dashed #555555; margin: 20px; cursor: pointer; transition: all 0.2s;">
+                    <i class="fas fa-terminal fa-3x mb-4 text-white"></i>
+                    <h4 class="mb-2 fw-bold text-white text-uppercase" style="letter-spacing: 2px; font-family: monospace;">Initialize Analysis Sequence</h4>
+                    <p class="small mb-0 text-muted" style="font-family: monospace;">[ Drag & Drop payload ] or [ Click to Browse ]</p>
+                    <p class="small mt-2 text-muted" style="font-family: monospace;">Supported: .LOG, .TXT, .JSON</p>
                     <input type="file" id="fileInput" name="file" class="d-none" accept=".log,.txt,.json" onchange="updateFileName(this)">
                 </div>
 
-                <div id="fileNameDisplay" class="text-center mb-4" style="display:none;">
-                    <i class="fas fa-file-alt me-2"></i><span id="fName"></span>
+                <div id="fileNameDisplay" class="text-center mb-4" style="display:none; font-family: monospace;">
+                    <i class="fas fa-file-code me-2 text-white"></i><span id="fName" class="text-white fw-bold"></span>
                 </div>
 
-                <div class="d-grid">
-                    <button type="submit" class="btn btn-custom btn-lg">
-                        <i class="fas fa-magic me-2"></i>Analyze Log
+                <!-- Matrix Terminal Animation -->
+                <div id="terminalOutput" class="d-none text-start p-4 mx-4 mb-4" style="background: #050505; border: 1px solid #111; color: #00ff00; font-family: monospace; font-size: 0.8rem; height: 150px; overflow: hidden;">
+                    > STANDBY...
+                </div>
+
+                <div class="d-grid m-4">
+                    <button type="submit" id="analyzeBtn" class="btn btn-outline-light btn-lg rounded-0 fw-bold" style="letter-spacing: 4px; font-family: monospace; text-transform: uppercase;">
+                        Execute Directive
                     </button>
                 </div>
             </form>
@@ -64,67 +70,180 @@
             </div>
         </div>
 
-        <div class="row g-3 text-center">
-            <div class="col-md-4">
-                <div class="card card-custom p-4">
-                    <i class="fas fa-search fa-2x mb-3"></i>
-                    <h6 class="fw-bold">Smart Parsing</h6>
-                    <p class="small mb-0">Regex-powered scanning of ERROR, WARNING, FAILED & TIMEOUT events.</p>
+        <div class="row g-4 mb-5">
+            <!-- Must Have -->
+            <div class="col-md-6">
+                <div class="card card-custom p-4 h-100 border border-success border-opacity-25" style="background: rgba(30, 41, 59, 0.7) !important;">
+                    <h5 class="fw-bold mb-4 text-white"><i class="fas fa-check-circle text-success me-2"></i>Platform Capabilities</h5>
+                    <ul class="list-unstyled mb-0 text-white" style="line-height: 2;">
+                        <li><i class="fas fa-check text-success me-2"></i>Real network diagnostics</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Log upload & analysis</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Historical reports</li>
+                        <li><i class="fas fa-check text-success me-2"></i>PDF export</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Security score</li>
+                        <li><i class="fas fa-check text-success me-2"></i>AI-generated insights</li>
+                    </ul>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card card-custom p-4">
-                    <i class="fas fa-brain fa-2x mb-3"></i>
-                    <h6 class="fw-bold">AI Chat</h6>
-                    <p class="small mb-0">Ask natural language questions about your logs and get instant answers.</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card card-custom p-4">
-                    <i class="fas fa-shield-alt fa-2x mb-3"></i>
-                    <h6 class="fw-bold">Incident Reports</h6>
-                    <p class="small mb-0">Auto-generate structured incident reports with severity and root cause.</p>
+            
+            <!-- Wow Factor -->
+            <div class="col-md-6">
+                <div class="card card-custom p-4 h-100 border border-primary border-opacity-25" style="background: rgba(30, 41, 59, 0.7) !important;">
+                    <h5 class="fw-bold mb-4 text-white"><i class="fas fa-star text-primary me-2"></i>Recruiter Wow-Factor</h5>
+                    <ul class="list-unstyled mb-0 text-white" style="line-height: 2;">
+                        <li><i class="fas fa-rocket text-primary me-2"></i>AI Network Copilot</li>
+                        <li><i class="fas fa-rocket text-primary me-2"></i>Live monitoring dashboard</li>
+                        <li><i class="fas fa-rocket text-primary me-2"></i>HAR file analyzer</li>
+                        <li><i class="fas fa-rocket text-primary me-2"></i>Network topology visualization</li>
+                    </ul>
                 </div>
             </div>
         </div>
+
+        <div class="row g-3 text-center mb-5">
+            <div class="col-md-4">
+                <div class="card card-custom p-4 text-white">
+                    <i class="fas fa-search fa-2x mb-3 text-white"></i>
+                    <h6 class="fw-bold text-white">Smart Parsing</h6>
+                    <p class="small mb-0 text-white opacity-75">Regex-powered scanning of ERROR, WARNING, FAILED & TIMEOUT events.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-custom p-4 text-white">
+                    <i class="fas fa-brain fa-2x mb-3 text-white"></i>
+                    <h6 class="fw-bold text-white">AI Chat</h6>
+                    <p class="small mb-0 text-white opacity-75">Ask natural language questions about your logs and get instant answers.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-custom p-4 text-white">
+                    <i class="fas fa-shield-alt fa-2x mb-3 text-white"></i>
+                    <h6 class="fw-bold text-white">Incident Reports</h6>
+                    <p class="small mb-0 text-white opacity-75">Auto-generate structured incident reports with severity and root cause.</p>
+                </div>
+            </div>
+        </div>
+        
+        <style>
+            /* Force text to white for visibility */
+            body, p, h1, h2, h3, h4, h5, h6, span, div, li {
+                color: #ffffff !important;
+            }
+            .text-muted {
+                color: #cbd5e1 !important; /* light gray so it's visible */
+            }
+            .gradient-text {
+                background: linear-gradient(90deg, #38bdf8, #6366f1);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                color: transparent !important;
+            }
+            .nav-item {
+                color: #f8fafc !important;
+            }
+            .nav-item:hover, .nav-item.active {
+                color: #38bdf8 !important;
+            }
+            input, select, textarea {
+                color: #ffffff !important;
+            }
+        </style>
 
     </div>
 </div>
 
 <script>
-function updateFileName(input) {
-    if (input.files && input.files[0]) {
-        document.getElementById('fileNameDisplay').style.display = 'block';
-        document.getElementById('fName').textContent = input.files[0].name;
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    const fName = document.getElementById('fName');
+    const uploadForm = document.getElementById('uploadForm');
+    const terminalOutput = document.getElementById('terminalOutput');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults (e) { e.preventDefault(); e.stopPropagation(); }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, unhighlight, false);
+    });
+
+    function highlight(e) {
+        uploadArea.style.borderColor = '#ffffff';
+        uploadArea.style.background = '#111111';
     }
-}
 
-const uploadArea = document.getElementById('uploadArea');
+    function unhighlight(e) {
+        uploadArea.style.borderColor = '#555555';
+        uploadArea.style.background = '#000000';
+    }
 
-['dragenter','dragover','dragleave','drop'].forEach(e =>
-    uploadArea.addEventListener(e, ev => {
-        ev.preventDefault();
-        ev.stopPropagation();
-    })
-);
+    uploadArea.addEventListener('drop', handleDrop, false);
 
-['dragenter','dragover'].forEach(e =>
-    uploadArea.addEventListener(e, () => {
-        uploadArea.style.borderColor = 'var(--primary)';
-        uploadArea.style.background = 'rgba(56,189,248,0.08)';
-    })
-);
+    function handleDrop(e) {
+        let dt = e.dataTransfer;
+        let files = dt.files;
+        fileInput.files = files;
+        updateFileName(fileInput);
+    }
 
-['dragleave','drop'].forEach(e =>
-    uploadArea.addEventListener(e, () => {
-        uploadArea.style.borderColor = 'rgba(255,255,255,0.15)';
-        uploadArea.style.background = 'rgba(255,255,255,0.03)';
-    })
-);
+    function updateFileName(input) {
+        if(input.files && input.files.length > 0) {
+            fName.innerText = input.files[0].name;
+            fileNameDisplay.style.display = 'block';
+            uploadArea.style.borderColor = '#ffffff';
+            uploadArea.style.background = '#0a0a0a';
+        } else {
+            fileNameDisplay.style.display = 'none';
+            uploadArea.style.borderColor = '#555555';
+            uploadArea.style.background = '#000000';
+        }
+    }
 
-uploadArea.addEventListener('drop', e => {
-    document.getElementById('fileInput').files = e.dataTransfer.files;
-    updateFileName(document.getElementById('fileInput'));
-});
+    uploadForm.addEventListener('submit', function(e) {
+        if (!fileInput.files || fileInput.files.length === 0) {
+            e.preventDefault();
+            alert("No payload detected. Please attach a file.");
+            return;
+        }
+
+        e.preventDefault(); 
+        
+        analyzeBtn.disabled = true;
+        analyzeBtn.innerText = "EXECUTING...";
+        uploadArea.classList.add('d-none');
+        fileNameDisplay.classList.add('d-none');
+        terminalOutput.classList.remove('d-none');
+
+        const sequence = [
+            "> INITIATING SECURE UPLOAD...",
+            "> ESTABLISHING HANDSHAKE...",
+            "> PARSING PAYLOAD HEADERS...",
+            "> RUNNING HEURISTICS ENGINE...",
+            "> CROSS-REFERENCING THREAT SIGNATURES...",
+            "> DECRYPTING METRICS...",
+            "> ANALYSIS COMPLETE. REDIRECTING..."
+        ];
+
+        let i = 0;
+        terminalOutput.innerHTML = sequence[0] + "<br>";
+        
+        const interval = setInterval(() => {
+            i++;
+            if (i < sequence.length) {
+                terminalOutput.innerHTML += sequence[i] + "<br>";
+            } else {
+                clearInterval(interval);
+                uploadForm.submit(); 
+            }
+        }, 300);
+    });
 </script>
 {% endblock %}

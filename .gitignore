@@ -1,14 +1,11 @@
 __pycache__/
-*.py[cod]
-*$py.class
-venv/
+*.pyc
+*.pyo
+*.pyd
+.Python
 env/
-ENV/
+venv/
 .env
-
-# Database
-logs.db
-
-# Uploads directory - ignore contents but keep the folder
-uploads/*
-!uploads/.gitkeep
+instance/
+uploads/
+.pytest_cache/

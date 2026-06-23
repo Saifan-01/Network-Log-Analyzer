@@ -19,13 +19,88 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v={{ range(1, 100000) | random }}">
 
+    <style>
+        /* Brutalist global overrides */
+        body, p, h1, h2, h3, h4, h5, h6, span, div, li, a {
+            color: #ffffff !important;
+            font-family: 'Helvetica Neue', 'Inter', sans-serif !important;
+            border-radius: 0 !important;
+        }
+        .text-muted {
+            color: #888888 !important; 
+        }
+        .text-success { color: #33ff33 !important; }
+        .text-danger { color: #ff3333 !important; }
+        .text-warning { color: #ffcc00 !important; }
+        .text-primary { color: #ffffff !important; }
+        .text-info { color: #ffffff !important; }
+        
+        .gradient-text {
+            /* Strip gradients for brutalist look */
+            color: #ffffff !important;
+            background: none !important;
+            -webkit-text-fill-color: #ffffff !important;
+        }
+        .nav-item {
+            color: #888888 !important;
+            border-left: 4px solid transparent;
+            border-radius: 0 !important;
+            font-family: monospace;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 18px 24px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        .nav-item i {
+            color: inherit !important;
+            width: 24px;
+            text-align: center;
+        }
+        .nav-item:hover {
+            color: #ffffff !important;
+            border-left: 4px solid #ffffff;
+            background: #111111;
+        }
+        .nav-item.active {
+            color: #000000 !important;
+            background: #ffffff !important;
+            border-left: 4px solid #000000 !important;
+        }
+        .sidebar-section-title {
+            font-family: monospace;
+            font-size: 0.8rem;
+            letter-spacing: 4px;
+            color: #555555;
+            border-bottom: 1px solid #333333;
+            padding-bottom: 8px;
+            margin-bottom: 8px;
+            margin-top: 32px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        input, select, textarea, .btn {
+            border-radius: 0 !important;
+            border: 1px solid #333333 !important;
+            color: #ffffff !important;
+            background-color: #000000 !important;
+        }
+        .card, .bg-dark {
+            border-radius: 0 !important;
+            background: #000000 !important;
+            border: 1px solid #333333 !important;
+            box-shadow: none !important;
+            backdrop-filter: none !important;
+        }
+        /* Hide blurring elements */
+        .bg-blur { display: none !important; }
+    </style>
 </head>
 
 <body>
-
-    <!-- Background Blur Circles -->
-    <div class="bg-blur bg-blur-1"></div>
-    <div class="bg-blur bg-blur-2"></div>
 
     <button class="mobile-nav-toggle" onclick="document.getElementById('sidebar').classList.toggle('show')">
         <i class="fas fa-bars"></i>
@@ -34,38 +109,65 @@
     <div class="app-wrapper">
         <!-- Sidebar Navigation -->
         <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
+            <div class="sidebar-header" style="border-bottom: 2px solid #ffffff; padding: 24px; margin-bottom: 20px;">
                 <a class="d-flex align-items-center text-decoration-none" href="{{ url_for('index') }}">
-                    <div class="logo-icon me-3" style="width: 40px; height: 40px; font-size: 1rem;">
-                        <i class="fas fa-network-wired"></i>
+                    <div class="logo-icon me-3 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; background: #ffffff; color: #000000; border-radius: 0; font-size: 1.2rem; border: 2px solid #000;">
+                        <i class="fas fa-terminal"></i>
                     </div>
                     <div>
-                        <div class="brand-title text-white mb-0" style="font-family: 'Poppins'; font-size: 1rem;">NetAssist AI</div>
-                        <div class="text-muted" style="font-size: 0.7rem; letter-spacing: 0.5px;">OBSERVABILITY</div>
+                        <div class="brand-title text-white mb-0" style="font-family: monospace; font-size: 1.2rem; font-weight: bold; letter-spacing: 1px;">NetAssist AI</div>
+                        <div class="text-muted" style="font-family: monospace; font-size: 0.7rem; letter-spacing: 2px;">OBSERVABILITY</div>
                     </div>
                 </a>
             </div>
 
-            <div class="px-3 mb-2 text-uppercase text-muted" style="font-size: 0.7rem; font-weight: 600; letter-spacing: 1px;">Platform</div>
+            <div class="px-3 sidebar-section-title">Platform</div>
             
             <a href="{{ url_for('index') }}" class="nav-item {% if request.endpoint == 'index' %}active{% endif %}">
-                <i class="fas fa-home fa-fw"></i> Overview
+                <i class="fas fa-home fa-fw me-2"></i> Overview
             </a>
             <a href="{{ url_for('dashboard_view') }}" class="nav-item {% if request.endpoint == 'dashboard_view' %}active{% endif %}">
-                <i class="fas fa-chart-line fa-fw"></i> Dashboard
+                <i class="fas fa-chart-line fa-fw me-2"></i> Dashboard
             </a>
             <a href="{{ url_for('explorer') }}" class="nav-item {% if request.endpoint == 'explorer' %}active{% endif %}">
-                <i class="fas fa-search fa-fw"></i> Log Explorer
+                <i class="fas fa-search fa-fw me-2"></i> Log Explorer
             </a>
+            {% if current_user.is_authenticated and current_user.role == 'admin' %}
+            <a href="{{ url_for('alerts') }}" class="nav-item {% if request.endpoint == 'alerts' %}active{% endif %}">
+                <i class="fas fa-bell fa-fw me-2"></i> Alert Engine
+            </a>
+            {% endif %}
             
-            <div class="px-3 mt-4 mb-2 text-uppercase text-muted" style="font-size: 0.7rem; font-weight: 600; letter-spacing: 1px;">Tools</div>
+            <div class="px-3 sidebar-section-title">Tools</div>
             
             <a href="{{ url_for('app_main') }}" class="nav-item {% if request.endpoint == 'app_main' %}active{% endif %}">
-                <i class="fas fa-upload fa-fw"></i> Import / Simulate
+                <i class="fas fa-upload fa-fw me-2"></i> Import / Simulate
             </a>
             <a href="{{ url_for('docs') }}" class="nav-item {% if request.endpoint == 'docs' %}active{% endif %}">
-                <i class="fas fa-book fa-fw"></i> Documentation
+                <i class="fas fa-book fa-fw me-2"></i> Documentation
             </a>
+
+            <div class="px-3 sidebar-section-title">Account</div>
+            
+            {% if current_user.is_authenticated %}
+                <a href="#" class="nav-item">
+                    <i class="fas fa-user-circle fa-fw me-2"></i> {{ current_user.username }}
+                    <span class="badge bg-secondary ms-auto rounded-0" style="font-family: monospace; font-size: 0.6rem;">{{ current_user.role | upper }}</span>
+                </a>
+                <a href="{{ url_for('history') }}" class="nav-item {% if request.endpoint == 'history' %}active{% endif %}">
+                    <i class="fas fa-history fa-fw me-2"></i> Scan History
+                </a>
+                <a href="{{ url_for('logout') }}" class="nav-item text-danger">
+                    <i class="fas fa-sign-out-alt fa-fw me-2"></i> Logout
+                </a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="nav-item {% if request.endpoint == 'login' %}active{% endif %}">
+                    <i class="fas fa-sign-in-alt fa-fw me-2"></i> Sign In
+                </a>
+                <a href="{{ url_for('register') }}" class="nav-item {% if request.endpoint == 'register' %}active{% endif %}">
+                    <i class="fas fa-user-plus fa-fw me-2"></i> Register
+                </a>
+            {% endif %}
 
             <div class="mt-auto px-4 pb-4">
                 <div class="card bg-dark border-secondary p-3 rounded-3" style="background: rgba(255,255,255,0.03) !important;">

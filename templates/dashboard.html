@@ -26,7 +26,61 @@
             <ul class="dropdown-menu dropdown-menu-dark shadow">
                 <li><a class="dropdown-item" href="/export/csv/{{ analysis_id }}"><i class="fas fa-file-csv me-2 text-success"></i> CSV Format</a></li>
                 <li><a class="dropdown-item" href="/export/json/{{ analysis_id }}"><i class="fas fa-file-code me-2 text-info"></i> JSON Format</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#" onclick="window.print();"><i class="fas fa-file-pdf me-2 text-danger"></i> PDF Report</a></li>
             </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Live Desktop Agent Telemetry -->
+<div class="row g-3 mb-4" id="liveAgentSection" style="display: none;">
+    <div class="col-12">
+        <div class="card bg-dark border-0 rounded-4 p-4 shadow-sm" style="background: linear-gradient(145deg, rgba(16, 185, 129, 0.15) 0%, rgba(15, 23, 42, 0.9) 100%) !important; backdrop-filter: blur(10px); border: 1px solid rgba(16, 185, 129, 0.3) !important;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold mb-0 text-white"><i class="fas fa-desktop me-2 text-success"></i>Live Desktop Agent Telemetry</h6>
+                <span class="badge bg-success bg-opacity-10 text-success border border-success pulse-dot" id="agentStatusBadge">Agent Connected: <span id="agentIdDisplay">Unknown</span></span>
+            </div>
+            <div class="row text-center">
+                <div class="col-md-3">
+                    <div class="text-muted small fw-bold text-uppercase mb-1">CPU Usage</div>
+                    <h3 class="text-white fw-bold mb-0" id="liveCpu">0%</h3>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-muted small fw-bold text-uppercase mb-1">Memory Usage</div>
+                    <h3 class="text-white fw-bold mb-0" id="liveMem">0%</h3>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-muted small fw-bold text-uppercase mb-1">Upload Speed</div>
+                    <h3 class="text-white fw-bold mb-0" id="liveUp">0 KB/s</h3>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-muted small fw-bold text-uppercase mb-1">Download Speed</div>
+                    <h3 class="text-white fw-bold mb-0" id="liveDown">0 KB/s</h3>
+                </div>
+            </div>
+            
+            <hr class="border-success opacity-25 my-4">
+            
+            <div class="row align-items-end">
+                <div class="col-md-4">
+                    <label class="text-muted small fw-bold mb-2">Target Host / IP</label>
+                    <input type="text" id="diagTarget" class="form-control bg-dark border-success text-white" value="8.8.8.8" placeholder="e.g. 192.168.1.1">
+                </div>
+                <div class="col-md-2">
+                    <label class="text-muted small fw-bold mb-2">Port (optional)</label>
+                    <input type="number" id="diagPort" class="form-control bg-dark border-success text-white" value="80" placeholder="e.g. 443">
+                </div>
+                <div class="col-md-6 d-flex gap-2">
+                    <button class="btn btn-outline-success flex-grow-1" onclick="runDiagnostic('ping')"><i class="fas fa-satellite-dish me-2"></i>Ping</button>
+                    <button class="btn btn-outline-success flex-grow-1" onclick="runDiagnostic('dns')"><i class="fas fa-globe me-2"></i>DNS</button>
+                    <button class="btn btn-outline-success flex-grow-1" onclick="runDiagnostic('portscan')"><i class="fas fa-door-open me-2"></i>Port Scan</button>
+                </div>
+            </div>
+            
+            <div class="mt-3 bg-dark p-3 rounded font-monospace small" id="diagOutput" style="min-height: 50px; border: 1px dashed rgba(16, 185, 129, 0.4); color: #4ade80;">
+                Waiting for diagnostic command...
+            </div>
         </div>
     </div>
 </div>
@@ -66,7 +120,7 @@
         <div class="card bg-dark border-0 rounded-4 p-4 shadow-sm h-100" style="background: rgba(30, 41, 59, 0.5) !important; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05) !important;">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h6 class="fw-bold mb-0 text-white">Traffic & Error Rate (Last 60m)</h6>
-                <span class="badge bg-secondary text-muted bg-opacity-10 border border-secondary">Simulated Time-Series</span>
+                <span class="badge bg-secondary text-muted bg-opacity-10 border border-secondary">Aggregated Telemetry</span>
             </div>
             <div style="height: 250px;">
                 <canvas id="trafficChart"></canvas>
@@ -109,9 +163,57 @@
         </div>
     </div>
 
-    <!-- AI Intelligence -->
+    <!-- Segmented Security Scores -->
     <div class="col-md-8">
-        <div class="card bg-dark border-0 rounded-4 p-4 shadow-sm h-100" style="background: linear-gradient(145deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%) !important; backdrop-filter: blur(10px); border: 1px solid rgba(56, 189, 248, 0.1) !important;">
+        <div class="card bg-dark border-0 rounded-4 p-4 shadow-sm h-100" style="background: rgba(30, 41, 59, 0.5) !important; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05) !important;">
+            <h6 class="fw-bold mb-4 text-white"><i class="fas fa-shield-alt me-2 text-success"></i>Security Posture Scoring</h6>
+            
+            <div class="row text-center g-3">
+                <div class="col-4">
+                    <div class="position-relative d-inline-block">
+                        <svg width="80" height="80" viewBox="0 0 36 36">
+                            <path class="text-muted" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <path class="text-success" stroke-dasharray="{{ scores.encryption }}, 100" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        </svg>
+                        <div class="position-absolute top-50 start-50 translate-middle text-white fw-bold">{{ scores.encryption }}</div>
+                    </div>
+                    <div class="small text-muted mt-2 text-uppercase fw-bold">Encryption</div>
+                </div>
+                <div class="col-4">
+                    <div class="position-relative d-inline-block">
+                        <svg width="80" height="80" viewBox="0 0 36 36">
+                            <path class="text-muted" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <path class="text-warning" stroke-dasharray="{{ scores.exposure }}, 100" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        </svg>
+                        <div class="position-absolute top-50 start-50 translate-middle text-white fw-bold">{{ scores.exposure }}</div>
+                    </div>
+                    <div class="small text-muted mt-2 text-uppercase fw-bold">Exposure</div>
+                </div>
+                <div class="col-4">
+                    <div class="position-relative d-inline-block">
+                        <svg width="80" height="80" viewBox="0 0 36 36">
+                            <path class="text-muted" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <path class="text-danger" stroke-dasharray="{{ scores.auth }}, 100" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        </svg>
+                        <div class="position-absolute top-50 start-50 translate-middle text-white fw-bold">{{ scores.auth }}</div>
+                    </div>
+                    <div class="small text-muted mt-2 text-uppercase fw-bold">Authentication</div>
+                </div>
+            </div>
+            
+            <div class="mt-4 pt-3 border-top border-secondary border-opacity-25">
+                <span class="text-muted small">Overall Score: </span>
+                <span class="badge {% if scores.overall > 80 %}bg-success{% elif scores.overall > 50 %}bg-warning{% else %}bg-danger{% endif %}">{{ scores.overall }} / 100</span>
+                <p class="text-white small mt-2 fw-bold"><i class="fas fa-search me-2 text-primary"></i>Root Cause: <span class="text-muted fw-normal">{{ root_cause }}</span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <!-- AI Intelligence -->
+    <div class="col-md-12">
+        <div class="card bg-dark border-0 rounded-4 p-4 shadow-sm mb-4" style="background: linear-gradient(145deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%) !important; backdrop-filter: blur(10px); border: 1px solid rgba(56, 189, 248, 0.1) !important;">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h6 class="fw-bold mb-0 text-white"><i class="fas fa-brain me-2 text-primary"></i>AI Intelligence Layer</h6>
                 <span class="badge bg-primary bg-opacity-10 text-primary border border-primary">Auto-Generated</span>
@@ -144,6 +246,16 @@
     </div>
 </div>
 
+<!-- Network Topology Row -->
+<div class="row g-3 mb-4">
+    <div class="col-12">
+        <div class="card bg-dark border-0 rounded-4 p-4 shadow-sm" style="background: rgba(30, 41, 59, 0.5) !important; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05) !important;">
+            <h6 class="fw-bold mb-4 text-white"><i class="fas fa-project-diagram me-2 text-info"></i>Network Topology Visualization</h6>
+            <div id="topologyNetwork" style="height: 400px; width: 100%; border: 1px dashed rgba(255,255,255,0.1); border-radius: 8px;"></div>
+        </div>
+    </div>
+</div>
+
 <style>
     @keyframes pulse {
         0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
@@ -159,39 +271,115 @@
 
 {% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+<script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
 
 <script>
-// Chat Logic
-function sendQuestion() {
-    const input = document.getElementById('chatInput');
-    const question = input.value.trim();
-    if(!question) return;
+// Socket.IO Telemetry Listener
+const socket = io();
 
-    const chatBox = document.getElementById('chatBox');
-    chatBox.innerHTML = `<div class="mb-2"><span class="text-white fw-bold">You:</span> ${question}</div><div class="text-primary"><i class="fas fa-spinner fa-spin me-2"></i>AI is analyzing...</div>`;
-    input.value = '';
-
-    fetch('/ask', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ question: question, analysis_id: '{{ analysis_id }}' })
-    })
-    .then(r => r.json())
-    .then(data => {
-        // Simple markdown parsing for bold
-        let formattedAnswer = data.answer.replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>');
-        formattedAnswer = formattedAnswer.replace(/\n/g, '<br>');
+socket.on('live_log_stream', function(data) {
+    // 1. Update Critical Findings if the list exists
+    const list = document.querySelector('.list-group');
+    if (list) {
+        // If "No findings" text exists, remove it
+        if(list.innerText.includes('No critical findings') || list.children.length === 1 && list.children[0].innerText.includes('No critical')) {
+            list.innerHTML = '';
+        }
         
-        chatBox.innerHTML = `
-            <div class="mb-3 pb-3 border-bottom border-secondary border-opacity-25">
-                <span class="text-white fw-bold">You:</span> <span class="text-muted">${question}</span>
+        const li = document.createElement('li');
+        li.className = 'list-group-item bg-transparent border-secondary border-opacity-25 px-4 py-3';
+        li.innerHTML = `
+            <div class="d-flex w-100 justify-content-between align-items-center mb-1">
+                <span class="badge bg-danger rounded-0 font-monospace">${data.type}</span>
+                <small class="text-muted font-monospace">${data.timestamp}</small>
             </div>
-            <div class="d-flex">
-                <div class="me-3 mt-1"><i class="fas fa-robot text-primary fs-5"></i></div>
-                <div class="lh-lg">${formattedAnswer}</div>
-            </div>
+            <p class="mb-1 text-white small font-monospace"><span class="text-warning">[LIVE]</span> ${data.message}</p>
         `;
+        list.insertBefore(li, list.firstChild);
+        if(list.children.length > 15) list.removeChild(list.lastChild);
+    }
+    
+    // 2. Pulse the total events counter
+    const totalBox = document.querySelector('.card h2.text-white');
+    if (totalBox && totalBox.innerText.includes(',')) {
+        let current = parseInt(totalBox.innerText.replace(/,/g, ''));
+        if(!isNaN(current)) {
+            totalBox.innerText = (current + 1).toLocaleString();
+            totalBox.style.color = '#0f0';
+            setTimeout(() => { totalBox.style.color = '#fff'; }, 500);
+        }
+    }
+});
+
+socket.on('telemetry_update', function(data) {
+    // Show the live agent section if hidden
+    document.getElementById('liveAgentSection').style.display = 'flex';
+    
+    // Update Agent ID
+    document.getElementById('agentIdDisplay').innerText = data.agent_id;
+    
+    // Update Metrics
+    document.getElementById('liveCpu').innerText = data.cpu.toFixed(1) + '%';
+    document.getElementById('liveMem').innerText = data.memory.toFixed(1) + '%';
+    document.getElementById('liveUp').innerText = (data.upload_bps / 1024).toFixed(1) + ' KB/s';
+    document.getElementById('liveDown').innerText = (data.download_bps / 1024).toFixed(1) + ' KB/s';
+});
+
+// Diagnostic Triggers
+function runDiagnostic(type) {
+    const target = document.getElementById('diagTarget').value || '8.8.8.8';
+    const port = document.getElementById('diagPort').value || '80';
+    document.getElementById('diagOutput').innerText = `Running ${type.toUpperCase()} on ${target}...`;
+    
+    socket.emit('request_diagnostic', {
+        type: type,
+        target: target,
+        port: port
     });
+}
+
+socket.on('diagnostic_response', function(data) {
+    const outputDiv = document.getElementById('diagOutput');
+    let color = data.status === 'Success' ? '#4ade80' : '#f87171';
+    outputDiv.innerHTML = `<span style="color: ${color}">[${data.status}]</span> ${data.output}`;
+});
+
+
+async function sendQuestion() {
+    const input = document.getElementById('chatInput');
+    const box = document.getElementById('chatBox');
+    if (!input.value.trim()) return;
+    
+    const userQuery = input.value.trim();
+    box.innerHTML = `<div class="mb-2 text-white"><strong>You:</strong> ${userQuery}</div>
+                     <div class="mb-3 text-primary"><i class="fas fa-spinner fa-spin me-2"></i>NetAssist AI is analyzing...</div>`;
+    input.value = '';
+    
+    try {
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ query: userQuery }),
+        });
+        
+        const data = await response.json();
+        
+        if (data.error) {
+            box.innerHTML = `<div class="mb-2 text-white"><strong>You:</strong> ${userQuery}</div>
+                             <div class="mb-3 text-danger"><strong>Error:</strong> ${data.error}</div>`;
+        } else {
+            let formattedAnswer = data.response.replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>');
+            formattedAnswer = formattedAnswer.replace(/\n/g, '<br>');
+            box.innerHTML = `<div class="mb-2 text-white"><strong>You:</strong> ${userQuery}</div>
+                             <div class="mb-3 text-success"><strong>NetAssist AI:</strong><br>${formattedAnswer}</div>`;
+        }
+    } catch (error) {
+        box.innerHTML = `<div class="mb-2 text-white"><strong>You:</strong> ${userQuery}</div>
+                         <div class="mb-3 text-danger"><strong>System Error:</strong> Failed to connect to AI engine.</div>`;
+    }
 }
 
 document.getElementById('chatInput').addEventListener('keypress', function (e) {
@@ -242,17 +430,25 @@ for(let i=60; i>=0; i-=5) {
 }
 
 // Generate mock data spikes based on actual counts
-const baseTraffic = Array.from({length: 13}, () => Math.floor(Math.random() * 50) + 100);
-const errorTraffic = Array.from({length: 13}, () => Math.floor(Math.random() * 5));
-
-// If we have actual errors, spike them at the end
 const totalErrors = {{ counts.get('ERROR', 0) }} + {{ counts.get('FAILED', 0) }};
+const baseTraffic = [];
+const errorTraffic = [];
+
+for(let i=0; i<13; i++) {
+    // Sine wave base traffic for realism (e.g. daily cycle)
+    let wave = Math.sin(i * 0.5) * 500 + 1500; 
+    let jitter = Math.floor(Math.random() * 200) - 100;
+    baseTraffic.push(Math.max(100, Math.floor(wave + jitter)));
+    errorTraffic.push(Math.floor(Math.random() * (totalErrors * 0.05)));
+}
+
+// Spike errors at the end to match current simulation
 if(totalErrors > 0) {
     errorTraffic[10] = Math.floor(totalErrors * 0.2);
     errorTraffic[11] = Math.floor(totalErrors * 0.5);
     errorTraffic[12] = Math.floor(totalErrors * 0.3);
     
-    baseTraffic[11] += 200; // Spike in overall traffic too
+    baseTraffic[11] += totalErrors; // Overall traffic spikes when an attack occurs
 }
 
 new Chart(trafficCtx, {
@@ -263,16 +459,16 @@ new Chart(trafficCtx, {
             {
                 label: 'Total Requests',
                 data: baseTraffic,
-                borderColor: '#38bdf8',
-                backgroundColor: 'rgba(56, 189, 248, 0.1)',
-                borderWidth: 2,
-                tension: 0.4,
+                borderColor: '#ffffff',
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                borderWidth: 1,
+                tension: 0,
                 fill: true
             },
             {
                 label: 'Errors/Failures',
                 data: errorTraffic,
-                borderColor: '#ef4444',
+                borderColor: '#888888',
                 backgroundColor: 'transparent',
                 borderWidth: 2,
                 tension: 0.4,
@@ -303,5 +499,88 @@ new Chart(trafficCtx, {
         }
     }
 });
+
+// Network Topology (Vis-Network)
+const topIpsData = {
+    {% for ip, count in top_ips.items() %}
+    "{{ ip }}": {{ count }},
+    {% endfor %}
+};
+
+const nodesArray = [
+    { id: 'server', label: 'Core Server\n(127.0.0.1)', shape: 'image', image: 'https://cdn-icons-png.flaticon.com/512/2888/2888716.png', size: 40, font: {color: 'white'} }
+];
+const edgesArray = [];
+
+let nodeId = 1;
+for (const [ip, count] of Object.entries(topIpsData)) {
+    // Brutalist styling: solid white/grey borders, no glow
+    let edgeColor = '#333333';
+    let edgeWidth = 1;
+    let nodeColor = '#000000';
+    
+    if (count > 2000) {
+        edgeColor = '#ffffff'; 
+        edgeWidth = 2;
+        nodeColor = '#333333';
+    } else if (count > 1000) {
+        edgeColor = '#888888'; 
+        edgeWidth = 1;
+        nodeColor = '#111111';
+    }
+    
+    nodesArray.push({
+        id: nodeId,
+        label: ip + '\n(' + count + ')',
+        shape: 'dot',
+        size: Math.min(25, 10 + (count / 500)),
+        color: nodeColor,
+        font: { color: '#cbd5e1', size: 12 }
+    });
+    
+    edgesArray.push({
+        from: nodeId,
+        to: 'server',
+        color: { color: edgeColor, opacity: 0.6 },
+        width: edgeWidth,
+        arrows: 'to'
+    });
+    
+    nodeId++;
+}
+
+// If no IPs, add a generic internet node
+if (nodeId === 1) {
+    nodesArray.push({ id: 'internet', label: 'Internet\n(No traffic logged)', shape: 'cloud', color: '#64748b', font: {color: 'white'} });
+    edgesArray.push({ from: 'internet', to: 'server', dashes: true, color: {color: '#64748b'} });
+}
+
+const container = document.getElementById('topologyNetwork');
+const data = {
+    nodes: new vis.DataSet(nodesArray),
+    edges: new vis.DataSet(edgesArray)
+};
+const options = {
+    nodes: { borderWidth: 2, borderWidthSelected: 4 },
+    edges: { smooth: { type: 'continuous' } },
+    physics: {
+        barnesHut: { gravitationalConstant: -2000, centralGravity: 0.3, springLength: 150 },
+        stabilization: { iterations: 150 }
+    },
+    interaction: { hover: true, tooltipDelay: 200 }
+};
+
+const network = new vis.Network(container, data, options);
+
+// Phase 5: Interactive Topology Mapping
+network.on("click", function(params) {
+    if (params.nodes.length > 0) {
+        const nodeId = params.nodes[0];
+        const clickedNode = data.nodes.get(nodeId);
+        // Redirect to Log Explorer and pre-filter by the clicked IP
+        window.location.href = `/explorer?ip=${encodeURIComponent(clickedNode.label)}`;
+    }
+});
+
 </script>
 {% endblock %}
